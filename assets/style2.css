@@ -1,0 +1,110 @@
+/* Background gradasi */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(to right, #00d4ff, #004d4d);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card putih di tengah */
+.login-box {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 40px 50px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: left;
+}
+
+/* Judul */
+.login-box h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+/* Garis kecil kuning di samping kiri judul */
+.login-box h1::before {
+  content: "";
+  position: absolute;
+  left: -17px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 25px;
+  background-color: #fdd835;
+  border-radius: 3px;
+}
+
+/* Subjudul LOGIN / SIGN UP */
+.login-box h2 {
+  text-align: center;
+  margin: 10px 0 5px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Keterangan di bawah LOGIN/SIGNUP */
+.subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* Input form */
+label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: block;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Tombol */
+button {
+  width: 100%;
+  background-color: #000;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #333;
+}
+
+/* Link bawah */
+.forgot {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #555;
+}
+
+.forgot a {
+  color: #0099cc;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot a:hover {
+  text-decoration: underline;
+}

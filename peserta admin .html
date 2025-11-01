@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peserta Rapat - Admin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: #f2e9dc;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 40px 25px;
+    }
+
+    .sidebar h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .sidebar h2::before {
+      content: "";
+      width: 5px;
+      height: 25px;
+      background-color: #f4ce14;
+      position: absolute;
+      left: -15px;
+      top: 0;
+      border-radius: 3px;
+    }
+
+    .sidebar .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background-color: #00f7ff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .menu i {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      background-color: #fff;
+      padding: 25px 40px;
+      overflow-y: auto;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .topbar .right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding: 8px 35px 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      background-color: #f9f9f9;
+      font-size: 14px;
+    }
+
+    .search-box i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .bell {
+      font-size: 18px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    /* Peserta Content */
+    .peserta-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .peserta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .peserta-header h2 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .btn-tambah {
+      background-color: #000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s;
+    }
+
+    .btn-tambah:hover {
+      background-color: #333;
+    }
+
+    /* Filter dan Tools Section */
+    .tools-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .filter-select {
+      padding: 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .action-tools {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-tool {
+      background-color: #f2e9dc;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s;
+    }
+
+    .btn-tool:hover {
+      background-color: #e0d8cc;
+    }
+
+    /* Peserta Table */
+    .peserta-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .peserta-table th {
+      background-color: #f2e9dc;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .peserta-table td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .peserta-table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .peserta-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-aktif {
+      background-color: #e6f7e6;
+      color: #2e7d32;
+    }
+
+    .status-nonaktif {
+      background-color: #ffeaea;
+      color: #d32f2f;
+    }
+
+    .status-pending {
+      background-color: #fff8e5;
+      color: #f57c00;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .btn-view {
+      background-color: #eaf4ff;
+      color: #1976d2;
+    }
+
+    .btn-view:hover {
+      background-color: #d1e7ff;
+    }
+
+    .btn-edit {
+      background-color: #fff8e5;
+      color: #f57c00;
+    }
+
+    .btn-edit:hover {
+      background-color: #ffeebc;
+    }
+
+    .btn-delete {
+      background-color: #ffeaea;
+      color: #d32f2f;
+    }
+
+    .btn-delete:hover {
+      background-color: #ffd1d1;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 22px;
+      font-weight: 600;
+      position: relative;
+    }
+
+    .modal-header h2::before {
+      content: "";
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 25px;
+      background-color: #f4ce14;
+      border-radius: 3px;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #777;
+      transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #00f7ff;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-footer {
+      padding: 20px 25px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+    }
+
+    /* Calendar Section */
+    .calendar-section {
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .calendar-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    .calendar-nav button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .calendar-day {
+      text-align: center;
+      font-weight: 600;
+      color: #333;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .calendar-date {
+      text-align: center;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .calendar-date:hover {
+      background-color: #eaf4ff;
+    }
+
+    .calendar-date.today {
+      background-color: #f4ce14;
+      color: white;
+      font-weight: 600;
+    }
+
+    .calendar-date.has-event {
+      background-color: #e6f7e6;
+      font-weight: 500;
+    }
+
+    .calendar-date.other-month {
+      color: #ccc;
+    }
+
+    /* Stats Cards */
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #666;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { padding: 20px; }
+      .peserta-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .tools-section { flex-direction: column; align-items: flex-start; }
+      .filter-group { flex-direction: column; width: 100%; }
+      .peserta-table { font-size: 14px; }
+      .peserta-table th, .peserta-table td { padding: 10px; }
+      .form-row { flex-direction: column; }
+      .stats-cards { grid-template-columns: 1fr; }
+      .calendar-grid { gap: 2px; }
+      .calendar-date { padding: 5px; font-size: 12px; }
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Pengelolaan Rapat</h2>
+    <div class="menu">
+      <a href="dashboard admin.html"><i class="fas fa-home"></i> Home</a>
+      <a href="jadwal admin.html"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="peserta admin .html" class="active"><i class="fas fa-user-graduate"></i> Peserta</a>
+      <a href="notulen admin.html"><i class="fas fa-file-alt"></i> Notulen</a>
+      
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Peserta Rapat</h1>
+      <div class="right">
+        <div class="search-box">
+          <input type="text" placeholder="Search peserta...">
+          <i class="fas fa-search"></i>
+        </div>
+        <i class="fas fa-bell bell"></i>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-number" id="totalPeserta">0</div>
+        <div class="stat-label">Total Peserta</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="pesertaAktif">0</div>
+        <div class="stat-label">Peserta Aktif</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalRapat">0</div>
+        <div class="stat-label">Total Rapat</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="kehadiranRata">0%</div>
+        <div class="stat-label">Rata-rata Kehadiran</div>
+      </div>
+    </div>
+
+    <!-- Calendar Section -->
+    <div class="calendar-section">
+      <div class="calendar-header">
+        <h3 id="calendarMonth">Desember 2023</h3>
+        <div class="calendar-nav">
+          <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+          <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="calendar-grid">
+        <div class="calendar-day">Sen</div>
+        <div class="calendar-day">Sel</div>
+        <div class="calendar-day">Rab</div>
+        <div class="calendar-day">Kam</div>
+        <div class="calendar-day">Jum</div>
+        <div class="calendar-day">Sab</div>
+        <div class="calendar-day">Min</div>
+        <!-- Calendar dates will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Peserta Content -->
+    <div class="peserta-container">
+      <div class="peserta-header">
+        <h2>Daftar Peserta</h2>
+        <button class="btn-tambah" id="btnTambahPeserta">
+          <i class="fas fa-plus"></i> Tambah Peserta
+        </button>
+      </div>
+
+      <!-- Tools Section -->
+      <div class="tools-section">
+        <div class="filter-group">
+          <select class="filter-select" id="filterStatus">
+            <option value="all">Semua Status</option>
+            <option value="aktif">Aktif</option>
+            <option value="nonaktif">Nonaktif</option>
+            <option value="pending">Pending</option>
+          </select>
+          <select class="filter-select" id="filterDepartemen">
+            <option value="all">Semua Departemen</option>
+            <option value="it">IT</option>
+            <option value="hrd">HRD</option>
+            <option value="marketing">Marketing</option>
+            <option value="keuangan">Keuangan</option>
+            <option value="operasional">Operasional</option>
+          </select>
+          <select class="filter-select" id="filterRapat">
+            <option value="all">Semua Rapat</option>
+            <option value="rapat-koordinasi">Rapat Koordinasi</option>
+            <option value="rapat-evaluasi">Rapat Evaluasi</option>
+            <option value="rapat-perencanaan">Rapat Perencanaan</option>
+          </select>
+        </div>
+        <div class="action-tools">
+          <button class="btn-tool" id="btnExport">
+            <i class="fas fa-download"></i> Export
+          </button>
+          <button class="btn-tool" id="btnPrint">
+            <i class="fas fa-print"></i> Print
+          </button>
+        </div>
+      </div>
+
+      <!-- Peserta Table -->
+      <table class="peserta-table">
+        <thead>
+          <tr>
+            <th>Nama Peserta</th>
+            <th>Email</th>
+            <th>Departemen</th>
+            <th>Jabatan</th>
+            <th>Status</th>
+            <th>Kehadiran</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Data akan diisi oleh JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Tambah/Edit Peserta -->
+  <div class="modal" id="modalPeserta">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Tambah Peserta Baru</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="formPeserta">
+        <input type="hidden" id="pesertaId">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="namaPeserta">Nama Lengkap *</label>
+              <input type="text" id="namaPeserta" class="form-control" placeholder="Masukkan nama lengkap" required>
+            </div>
+            <div class="form-group">
+              <label for="emailPeserta">Email *</label>
+              <input type="email" id="emailPeserta" class="form-control" placeholder="Masukkan email" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="departemenPeserta">Departemen *</label>
+              <select id="departemenPeserta" class="form-control" required>
+                <option value="">Pilih Departemen</option>
+                <option value="it">IT</option>
+                <option value="hrd">HRD</option>
+                <option value="marketing">Marketing</option>
+                <option value="keuangan">Keuangan</option>
+                <option value="operasional">Operasional</option>
+                <option value="lainnya">Lainnya</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="jabatanPeserta">Jabatan *</label>
+              <input type="text" id="jabatanPeserta" class="form-control" placeholder="Masukkan jabatan" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="teleponPeserta">Nomor Telepon</label>
+              <input type="tel" id="teleponPeserta" class="form-control" placeholder="Masukkan nomor telepon">
+            </div>
+            <div class="form-group">
+              <label for="statusPeserta">Status</label>
+              <select id="statusPeserta" class="form-control">
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="alamatPeserta">Alamat</label>
+            <textarea id="alamatPeserta" class="form-control" placeholder="Masukkan alamat" rows="2"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="keteranganPeserta">Keterangan Tambahan</label>
+            <textarea id="keteranganPeserta" class="form-control" placeholder="Masukkan keterangan tambahan" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmit">Simpan Peserta</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data peserta (simulasi database)
+    let dataPeserta = [
+      {
+        id: 1,
+        nama: "Ahmad Wijaya",
+        email: "ahmad.wijaya@company.com",
+        departemen: "it",
+        jabatan: "Software Developer",
+        telepon: "081234567890",
+        status: "aktif",
+        alamat: "Jl. Merdeka No. 123, Jakarta",
+        keterangan: "Peserta aktif dan selalu hadir dalam rapat",
+        kehadiran: "95%"
+      },
+      {
+        id: 2,
+        nama: "Sari Indah",
+        email: "sari.indah@company.com",
+        departemen: "hrd",
+        jabatan: "HR Manager",
+        telepon: "081234567891",
+        status: "aktif",
+        alamat: "Jl. Sudirman No. 45, Jakarta",
+        keterangan: "Koordinator rapat internal",
+        kehadiran: "100%"
+      },
+      {
+        id: 3,
+        nama: "Budi Santoso",
+        email: "budi.santoso@company.com",
+        departemen: "marketing",
+        jabatan: "Marketing Manager",
+        telepon: "081234567892",
+        status: "aktif",
+        alamat: "Jl. Thamrin No. 67, Jakarta",
+        keterangan: "Pemimpin rapat marketing",
+        kehadiran: "90%"
+      },
+      {
+        id: 4,
+        nama: "Dewi Lestari",
+        email: "dewi.lestari@company.com",
+        departemen: "keuangan",
+        jabatan: "Finance Manager",
+        telepon: "081234567893",
+        status: "nonaktif",
+        alamat: "Jl. Gatot Subroto No. 89, Jakarta",
+        keterangan: "Sedang cuti panjang",
+        kehadiran: "75%"
+      },
+      {
+        id: 5,
+        nama: "Rizki Pratama",
+        email: "rizki.pratama@company.com",
+        departemen: "operasional",
+        jabatan: "Operations Manager",
+        telepon: "081234567894",
+        status: "pending",
+        alamat: "Jl. Asia Afrika No. 12, Jakarta",
+        keterangan: "Baru bergabung",
+        kehadiran: "60%"
+      }
+    ];
+
+    // Data rapat untuk statistik
+    let dataRapat = [
+      { id: 1, nama: "Rapat Koordinasi Tim IT", tanggal: "2023-12-15" },
+      { id: 2, nama: "Rapat Evaluasi Proyek Q4", tanggal: "2023-12-18" },
+      { id: 3, nama: "Rapat Perencanaan 2024", tanggal: "2023-12-20" }
+    ];
+
+    // Elemen DOM
+    const modalPeserta = document.getElementById('modalPeserta');
+    const btnTambahPeserta = document.getElementById('btnTambahPeserta');
+    const closeModal = document.querySelector('.close-modal');
+    const btnBatal = document.getElementById('btnBatal');
+    const formPeserta = document.getElementById('formPeserta');
+    const tableBody = document.getElementById('tableBody');
+    const modalTitle = document.getElementById('modalTitle');
+    const pesertaIdInput = document.getElementById('pesertaId');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    // Calendar elements
+    const calendarMonth = document.getElementById('calendarMonth');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+    const calendarGrid = document.querySelector('.calendar-grid');
+
+    let editMode = false;
+    let currentEditId = null;
+    let currentDate = new Date();
+
+    // Fungsi untuk membuka modal tambah
+    btnTambahPeserta.addEventListener('click', function() {
+      editMode = false;
+      modalTitle.textContent = "Tambah Peserta Baru";
+      btnSubmit.textContent = "Simpan Peserta";
+      formPeserta.reset();
+      modalPeserta.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+
+    // Fungsi untuk membuka modal edit
+    function bukaModalEdit(id) {
+      editMode = true;
+      modalTitle.textContent = "Edit Peserta";
+      btnSubmit.textContent = "Update Peserta";
+      
+      const peserta = dataPeserta.find(item => item.id === id);
+      if (peserta) {
+        pesertaIdInput.value = peserta.id;
+        document.getElementById('namaPeserta').value = peserta.nama;
+        document.getElementById('emailPeserta').value = peserta.email;
+        document.getElementById('departemenPeserta').value = peserta.departemen;
+        document.getElementById('jabatanPeserta').value = peserta.jabatan;
+        document.getElementById('teleponPeserta').value = peserta.telepon || '';
+        document.getElementById('statusPeserta').value = peserta.status;
+        document.getElementById('alamatPeserta').value = peserta.alamat || '';
+        document.getElementById('keteranganPeserta').value = peserta.keterangan || '';
+        
+        modalPeserta.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // Fungsi untuk menutup modal
+    function tutupModal() {
+      modalPeserta.style.display = 'none';
+      document.body.style.overflow = 'auto';
+      formPeserta.reset();
+      editMode = false;
+      currentEditId = null;
+    }
+
+    closeModal.addEventListener('click', tutupModal);
+    btnBatal.addEventListener('click', tutupModal);
+
+    // Tutup modal ketika klik di luar konten modal
+    window.addEventListener('click', function(event) {
+      if (event.target === modalPeserta) {
+        tutupModal();
+      }
+    });
+
+    // Format nama departemen
+    function formatDepartemen(departemen) {
+      const departemenMap = {
+        'it': 'IT',
+        'hrd': 'HRD',
+        'marketing': 'Marketing',
+        'keuangan': 'Keuangan',
+        'operasional': 'Operasional',
+        'lainnya': 'Lainnya'
+      };
+      return departemenMap[departemen] || departemen;
+    }
+
+    // Update statistik
+    function updateStatistik() {
+      const totalPeserta = dataPeserta.length;
+      const pesertaAktif = dataPeserta.filter(p => p.status === 'aktif').length;
+      const totalRapat = dataRapat.length;
+      
+      // Hitung rata-rata kehadiran
+      const totalKehadiran = dataPeserta.reduce((sum, peserta) => {
+        const kehadiran = parseInt(peserta.kehadiran) || 0;
+        return sum + kehadiran;
+      }, 0);
+      const rataKehadiran = totalPeserta > 0 ? Math.round(totalKehadiran / totalPeserta) : 0;
+
+      document.getElementById('totalPeserta').textContent = totalPeserta;
+      document.getElementById('pesertaAktif').textContent = pesertaAktif;
+      document.getElementById('totalRapat').textContent = totalRapat;
+      document.getElementById('kehadiranRata').textContent = `${rataKehadiran}%`;
+    }
+
+    // Update tampilan tabel
+    function updateTampilanTabel() {
+      tableBody.innerHTML = '';
+      
+      dataPeserta.forEach(peserta => {
+        const statusText = peserta.status === 'aktif' ? 'Aktif' : 
+                          peserta.status === 'nonaktif' ? 'Nonaktif' : 'Pending';
+        const statusClass = `status-${peserta.status}`;
+        
+        const row = document.createElement('tr');
+        row.setAttribute('data-id', peserta.id);
+        row.innerHTML = `
+          <td>${peserta.nama}</td>
+          <td>${peserta.email}</td>
+          <td>${formatDepartemen(peserta.departemen)}</td>
+          <td>${peserta.jabatan}</td>
+          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td>${peserta.kehadiran}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-action btn-edit" data-id="${peserta.id}"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn-action btn-delete" data-id="${peserta.id}"><i class="fas fa-trash"></i> Hapus</button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+      
+      // Tambahkan event listener untuk tombol aksi
+      attachEventListeners();
+    }
+
+    // Attach event listeners untuk tombol aksi
+    function attachEventListeners() {
+      document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const id = parseInt(this.getAttribute('data-id'));
+          bukaModalEdit(id);
+        });
+      });
+
+      document.querySelectorAll('.btn-delete').forEach(button => {
+        button.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const id = parseInt(this.getAttribute('data-id'));
+          const peserta = dataPeserta.find(item => item.id === id);
+          if (peserta && confirm(`Apakah Anda yakin ingin menghapus peserta: ${peserta.nama}?`)) {
+            dataPeserta = dataPeserta.filter(item => item.id !== id);
+            updateTampilanTabel();
+            updateStatistik();
+            alert(`Peserta "${peserta.nama}" berhasil dihapus!`);
+          }
+        });
+      });
+    }
+
+    // Handle form submit (tambah dan edit)
+    formPeserta.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = {
+        nama: document.getElementById('namaPeserta').value,
+        email: document.getElementById('emailPeserta').value,
+        departemen: document.getElementById('departemenPeserta').value,
+        jabatan: document.getElementById('jabatanPeserta').value,
+        telepon: document.getElementById('teleponPeserta').value,
+        status: document.getElementById('statusPeserta').value,
+        alamat: document.getElementById('alamatPeserta').value,
+        keterangan: document.getElementById('keteranganPeserta').value,
+        kehadiran: "85%" // Default value
+      };
+
+      if (editMode) {
+        // Edit mode
+        const id = parseInt(pesertaIdInput.value);
+        const index = dataPeserta.findIndex(item => item.id === id);
+        if (index !== -1) {
+          dataPeserta[index] = { ...dataPeserta[index], ...formData };
+          alert(`Peserta "${formData.nama}" berhasil diperbarui!`);
+        }
+      } else {
+        // Tambah mode
+        const newId = dataPeserta.length > 0 ? Math.max(...dataPeserta.map(item => item.id)) + 1 : 1;
+        dataPeserta.push({
+          id: newId,
+          ...formData
+        });
+        alert(`Peserta "${formData.nama}" berhasil ditambahkan!`);
+      }
+
+      updateTampilanTabel();
+      updateStatistik();
+      tutupModal();
+    });
+
+    // Calendar functions
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      // Update calendar header
+      const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+                         "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+      calendarMonth.textContent = `${monthNames[month]} ${year}`;
+      
+      // Clear existing dates (keep day headers)
+      const existingDates = document.querySelectorAll('.calendar-date');
+      existingDates.forEach(date => date.remove());
+      
+      // Get first day of month and number of days
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      
+      // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
+      let firstDayOfWeek = firstDay.getDay();
+      // Convert to Monday-based week (0 = Monday, 6 = Sunday)
+      firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+      
+      // Add empty cells for days before the first day of month
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-date other-month';
+        emptyCell.textContent = '';
+        calendarGrid.appendChild(emptyCell);
+      }
+      
+      // Add cells for each day of the month
+      const today = new Date();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateCell = document.createElement('div');
+        dateCell.className = 'calendar-date';
+        dateCell.textContent = day;
+        
+        // Check if today
+        if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+          dateCell.classList.add('today');
+        }
+        
+        // Check if has event (random for demo)
+        if (Math.random() > 0.7) {
+          dateCell.classList.add('has-event');
+        }
+        
+        calendarGrid.appendChild(dateCell);
+      }
+    }
+
+    // Calendar navigation
+    prevMonthBtn.addEventListener('click', function() {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextMonthBtn.addEventListener('click', function() {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // Fungsi untuk menangani pencarian
+    document.querySelector('.search-box input').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('.peserta-table tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // Fungsi untuk filter berdasarkan status
+    document.getElementById('filterStatus').addEventListener('change', function(e) {
+      const status = e.target.value;
+      const rows = document.querySelectorAll('.peserta-table tbody tr');
+      
+      rows.forEach(row => {
+        const statusCell = row.querySelector('.status-badge');
+        if (status === 'all' || statusCell.classList.contains(`status-${status}`)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // Export functionality
+    document.getElementById('btnExport').addEventListener('click', function() {
+      alert('Fitur export data peserta akan dijalankan');
+      // Di sini bisa implementasi export ke Excel/CSV
+    });
+
+    // Print functionality
+    document.getElementById('btnPrint').addEventListener('click', function() {
+      window.print();
+    });
+
+    // Inisialisasi
+    updateTampilanTabel();
+    updateStatistik();
+    renderCalendar();
+  </script>
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Rapat - Admin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: #f2e9dc;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 40px 25px;
+    }
+
+    .sidebar h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .sidebar h2::before {
+      content: "";
+      width: 5px;
+      height: 25px;
+      background-color: #f4ce14;
+      position: absolute;
+      left: -15px;
+      top: 0;
+      border-radius: 3px;
+    }
+
+    .sidebar .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background-color: #00f7ff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .menu i {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      background-color: #fff;
+      padding: 25px 40px;
+      overflow-y: auto;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .topbar .right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding: 8px 35px 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      background-color: #f9f9f9;
+      font-size: 14px;
+    }
+
+    .search-box i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .bell {
+      font-size: 18px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    /* Jadwal Content */
+    .jadwal-container {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .jadwal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .jadwal-header h2 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .btn-tambah {
+      background-color: #000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.3s;
+    }
+
+    .btn-tambah:hover {
+      background-color: #333;
+    }
+
+    /* Jadwal Table */
+    .jadwal-table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .jadwal-table th {
+      background-color: #f2e9dc;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .jadwal-table td {
+      padding: 15px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .jadwal-table tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    .jadwal-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-selesai {
+      background-color: #e6f7e6;
+      color: #2e7d32;
+    }
+
+    .status-berlangsung {
+      background-color: #fff8e5;
+      color: #f57c00;
+    }
+
+    .status-mendatang {
+      background-color: #eaf4ff;
+      color: #1976d2;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+    }
+
+    .btn-edit {
+      background-color: #eaf4ff;
+      color: #1976d2;
+    }
+
+    .btn-edit:hover {
+      background-color: #d1e7ff;
+    }
+
+    .btn-hapus {
+      background-color: #ffeaea;
+      color: #d32f2f;
+    }
+
+    .btn-hapus:hover {
+      background-color: #ffd1d1;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .filter-select {
+      padding: 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 22px;
+      font-weight: 600;
+      position: relative;
+    }
+
+    .modal-header h2::before {
+      content: "";
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 5px;
+      height: 25px;
+      background-color: #f4ce14;
+      border-radius: 3px;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #777;
+      transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #00f7ff;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 15px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .modal-footer {
+      padding: 20px 25px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-secondary {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { padding: 20px; }
+      .jadwal-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .filter-section { flex-direction: column; }
+      .jadwal-table { font-size: 14px; }
+      .jadwal-table th, .jadwal-table td { padding: 10px; }
+      .form-row { flex-direction: column; }
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Pengelolaan Rapat</h2>
+    <div class="menu">
+      <a href="dashboard admin.html"><i class="fas fa-home"></i> Home</a>
+      <a href="tambah_jadwal admin.html" class="active"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="peserta admin .html"><i class="fas fa-user-graduate"></i> Peserta</a>
+      <a href="notulen.html admin"><i class="fas fa-file-alt"></i> Notulen</a>
+     
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Jadwal Rapat</h1>
+      <div class="right">
+        <div class="search-box">
+          <input type="text" placeholder="Search...">
+          <i class="fas fa-search"></i>
+        </div>
+        <i class="fas fa-bell bell"></i>
+      </div>
+    </div>
+
+    <!-- Jadwal Content -->
+    <div class="jadwal-container">
+      <div class="jadwal-header">
+        <h2>Daftar Rapat</h2>
+        <button class="btn-tambah" id="btnTambahRapat">
+          <i class="fas fa-plus"></i> Tambah Rapat
+        </button>
+      </div>
+
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <select class="filter-select">
+          <option value="all">Semua Status</option>
+          <option value="mendatang">Mendatang</option>
+          <option value="berlangsung">Berlangsung</option>
+          <option value="selesai">Selesai</option>
+        </select>
+        <select class="filter-select">
+          <option value="all">Semua Bulan</option>
+          <option value="januari">Januari</option>
+          <option value="februari">Februari</option>
+          <option value="maret">Maret</option>
+          <option value="april">April</option>
+          <option value="mei">Mei</option>
+          <option value="juni">Juni</option>
+          <option value="juli">Juli</option>
+          <option value="agustus">Agustus</option>
+          <option value="september">September</option>
+          <option value="oktober">Oktober</option>
+          <option value="november">November</option>
+          <option value="desember">Desember</option>
+        </select>
+      </div>
+
+      <!-- Jadwal Table -->
+      <table class="jadwal-table">
+        <thead>
+          <tr>
+            <th>Nama Rapat</th>
+            <th>Tanggal</th>
+            <th>Waktu</th>
+            <th>Lokasi</th>
+            <th>Pemimpin</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr>
+            <td>Rapat Koordinasi Tim IT</td>
+            <td>15 Des 2023</td>
+            <td>09:00 - 11:00</td>
+            <td>Ruang Rapat A</td>
+            <td>Budi Santoso</td>
+            <td><span class="status-badge status-selesai">Selesai</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn-action btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Rapat Evaluasi Proyek Q4</td>
+            <td>18 Des 2023</td>
+            <td>14:00 - 16:30</td>
+            <td>Ruang Rapat B</td>
+            <td>Sari Indah</td>
+            <td><span class="status-badge status-berlangsung">Berlangsung</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn-action btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Rapat Perencanaan 2024</td>
+            <td>20 Des 2023</td>
+            <td>10:00 - 12:00</td>
+            <td>Ruang Rapat C</td>
+            <td>Andi Wijaya</td>
+            <td><span class="status-badge status-mendatang">Mendatang</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn-action btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Rapat -->
+  <div class="modal" id="modalTambahRapat">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Tambah Rapat Baru</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="formTambahRapat">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="namaRapat">Nama Rapat *</label>
+            <input type="text" id="namaRapat" class="form-control" placeholder="Masukkan nama rapat" required>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tanggalRapat">Tanggal *</label>
+              <input type="date" id="tanggalRapat" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="waktuMulai">Waktu Mulai *</label>
+              <input type="time" id="waktuMulai" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="waktuSelesai">Waktu Selesai *</label>
+              <input type="time" id="waktuSelesai" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lokasiRapat">Lokasi *</label>
+              <input type="text" id="lokasiRapat" class="form-control" placeholder="Masukkan lokasi rapat" required>
+            </div>
+            <div class="form-group">
+              <label for="pemimpinRapat">Pemimpin Rapat *</label>
+              <input type="text" id="pemimpinRapat" class="form-control" placeholder="Masukkan nama pemimpin" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="jenisRapat">Jenis Rapat</label>
+            <select id="jenisRapat" class="form-control">
+              <option value="rapat-rutin">Rapat Rutin</option>
+              <option value="rapat-khusus">Rapat Khusus</option>
+              <option value="rapat-evaluasi">Rapat Evaluasi</option>
+              <option value="rapat-perencanaan">Rapat Perencanaan</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="pesertaRapat">Peserta Rapat</label>
+            <textarea id="pesertaRapat" class="form-control" placeholder="Masukkan daftar peserta (pisahkan dengan koma)"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="agendaRapat">Agenda Rapat</label>
+            <textarea id="agendaRapat" class="form-control" placeholder="Masukkan agenda rapat" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="keteranganRapat">Keterangan Tambahan</label>
+            <textarea id="keteranganRapat" class="form-control" placeholder="Masukkan keterangan tambahan" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
+          <button type="submit" class="btn btn-primary">Simpan Rapat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Elemen DOM
+    const modalTambahRapat = document.getElementById('modalTambahRapat');
+    const btnTambahRapat = document.getElementById('btnTambahRapat');
+    const closeModal = document.querySelector('.close-modal');
+    const btnBatal = document.getElementById('btnBatal');
+    const formTambahRapat = document.getElementById('formTambahRapat');
+    const tableBody = document.getElementById('tableBody');
+
+    // Fungsi untuk membuka modal
+    btnTambahRapat.addEventListener('click', function() {
+      modalTambahRapat.style.display = 'flex';
+      document.body.style.overflow = 'hidden'; // Mencegah scroll di background
+    });
+
+    // Fungsi untuk menutup modal
+    function tutupModal() {
+      modalTambahRapat.style.display = 'none';
+      document.body.style.overflow = 'auto'; // Mengembalikan scroll
+      formTambahRapat.reset(); // Reset form
+    }
+
+    closeModal.addEventListener('click', tutupModal);
+    btnBatal.addEventListener('click', tutupModal);
+
+    // Tutup modal ketika klik di luar konten modal
+    window.addEventListener('click', function(event) {
+      if (event.target === modalTambahRapat) {
+        tutupModal();
+      }
+    });
+
+    // Format tanggal untuk ditampilkan
+    function formatTanggal(tanggal) {
+      const options = { day: 'numeric', month: 'short', year: 'numeric' };
+      return new Date(tanggal).toLocaleDateString('id-ID', options);
+    }
+
+    // Format waktu untuk ditampilkan
+    function formatWaktu(waktu) {
+      return waktu.substring(0, 5);
+    }
+
+    // Tentukan status berdasarkan tanggal
+    function tentukanStatus(tanggal, waktuMulai, waktuSelesai) {
+      const sekarang = new Date();
+      const tanggalRapat = new Date(tanggal);
+      const waktuMulaiRapat = new Date(`${tanggal}T${waktuMulai}`);
+      const waktuSelesaiRapat = new Date(`${tanggal}T${waktuSelesai}`);
+      
+      if (sekarang > waktuSelesaiRapat) {
+        return 'selesai';
+      } else if (sekarang >= waktuMulaiRapat && sekarang <= waktuSelesaiRapat) {
+        return 'berlangsung';
+      } else {
+        return 'mendatang';
+      }
+    }
+
+    // Fungsi untuk menambahkan rapat baru ke tabel
+    formTambahRapat.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Ambil nilai dari form
+      const namaRapat = document.getElementById('namaRapat').value;
+      const tanggalRapat = document.getElementById('tanggalRapat').value;
+      const waktuMulai = document.getElementById('waktuMulai').value;
+      const waktuSelesai = document.getElementById('waktuSelesai').value;
+      const lokasiRapat = document.getElementById('lokasiRapat').value;
+      const pemimpinRapat = document.getElementById('pemimpinRapat').value;
+      
+      // Tentukan status
+      const status = tentukanStatus(tanggalRapat, waktuMulai, waktuSelesai);
+      const statusText = status === 'selesai' ? 'Selesai' : 
+                        status === 'berlangsung' ? 'Berlangsung' : 'Mendatang';
+      const statusClass = `status-${status}`;
+      
+      // Buat baris baru
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${namaRapat}</td>
+        <td>${formatTanggal(tanggalRapat)}</td>
+        <td>${formatWaktu(waktuMulai)} - ${formatWaktu(waktuSelesai)}</td>
+        <td>${lokasiRapat}</td>
+        <td>${pemimpinRapat}</td>
+        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-action btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+          </div>
+        </td>
+      `;
+      
+      // Tambahkan event listener untuk tombol edit dan hapus di baris baru
+      newRow.querySelector('.btn-edit').addEventListener('click', function() {
+        alert(`Edit data rapat: ${namaRapat}`);
+      });
+      
+      newRow.querySelector('.btn-hapus').addEventListener('click', function() {
+        if (confirm(`Apakah Anda yakin ingin menghapus rapat: ${namaRapat}?`)) {
+          newRow.remove();
+          alert(`Rapat ${namaRapat} berhasil dihapus`);
+        }
+      });
+      
+      // Tambahkan baris baru ke tabel (di bagian atas)
+      tableBody.prepend(newRow);
+      
+      // Tutup modal dan reset form
+      tutupModal();
+      
+      // Tampilkan pesan sukses
+      alert(`Rapat "${namaRapat}" berhasil ditambahkan!`);
+    });
+
+    // Fungsi untuk menangani pencarian
+    document.querySelector('.search-box input').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('.jadwal-table tbody tr');
+      
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // Fungsi untuk filter berdasarkan status
+    document.querySelectorAll('.filter-select')[0].addEventListener('change', function(e) {
+      const status = e.target.value;
+      const rows = document.querySelectorAll('.jadwal-table tbody tr');
+      
+      rows.forEach(row => {
+        const statusCell = row.querySelector('.status-badge');
+        if (status === 'all' || statusCell.classList.contains(`status-${status}`)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+
+    // Fungsi untuk tombol edit yang sudah ada
+    document.querySelectorAll('.btn-edit').forEach(button => {
+      button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const namaRapat = row.cells[0].textContent;
+        alert(`Edit data rapat: ${namaRapat}`);
+      });
+    });
+
+    // Fungsi untuk tombol hapus yang sudah ada
+    document.querySelectorAll('.btn-hapus').forEach(button => {
+      button.addEventListener('click', function() {
+        const row = this.closest('tr');
+        const namaRapat = row.cells[0].textContent;
+        
+        if (confirm(`Apakah Anda yakin ingin menghapus rapat: ${namaRapat}?`)) {
+          row.remove();
+          alert(`Rapat ${namaRapat} berhasil dihapus`);
+        }
+      });
+    });
+
+    // Set tanggal minimum untuk input tanggal (hari ini)
+    document.getElementById('tanggalRapat').min = new Date().toISOString().split('T')[0];
+  </script>
+</body>
+</html>

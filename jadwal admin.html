@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jadwal Rapat - Admin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    body{display:flex;height:100vh;overflow:hidden;}
+    .sidebar{width:260px;background-color:#f2e9dc;display:flex;flex-direction:column;justify-content:flex-start;padding:40px 25px;}
+    .sidebar h2{font-size:20px;font-weight:700;margin-bottom:50px;position:relative;}
+    .sidebar h2::before{content:"";width:5px;height:25px;background-color:#f4ce14;position:absolute;left:-15px;top:0;border-radius:3px;}
+    .menu{display:flex;flex-direction:column;gap:15px;}
+    .menu a{text-decoration:none;color:#222;display:flex;align-items:center;gap:12px;padding:10px 15px;border-radius:10px;font-weight:500;transition:all 0.3s ease;}
+    .menu a:hover,.menu a.active{background-color:#00f7ff;color:#000;font-weight:600;}
+    .menu i{width:20px;text-align:center;}
+    .main{flex:1;background-color:#fff;padding:25px 40px;overflow-y:auto;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px;}
+    .topbar h1{font-size:32px;font-weight:700;}
+    .search-box{position:relative;}
+    .search-box input{padding:8px 35px 8px 15px;border:1px solid #ccc;border-radius:10px;outline:none;background-color:#f9f9f9;font-size:14px;}
+    .search-box i{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:#999;}
+    .bell{font-size:18px;color:#555;cursor:pointer;}
+    .jadwal-container{display:flex;flex-direction:column;gap:25px;}
+    .jadwal-header{display:flex;justify-content:space-between;align-items:center;}
+    .btn-tambah{background-color:#000;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-weight:500;display:flex;align-items:center;gap:8px;transition:background 0.3s;}
+    .btn-tambah:hover{background-color:#333;}
+    .jadwal-table{width:100%;border-collapse:collapse;box-shadow:0 2px 6px rgba(0,0,0,0.1);border-radius:10px;overflow:hidden;}
+    .jadwal-table th{background-color:#f2e9dc;padding:15px;text-align:left;font-weight:600;color:#333;}
+    .jadwal-table td{padding:15px;border-bottom:1px solid #eee;}
+    .jadwal-table tr:hover{background-color:#f9f9f9;}
+    .status-badge{padding:5px 10px;border-radius:20px;font-size:12px;font-weight:500;}
+    .status-selesai{background-color:#e6f7e6;color:#2e7d32;}
+    .status-berlangsung{background-color:#fff8e5;color:#f57c00;}
+    .status-mendatang{background-color:#eaf4ff;color:#1976d2;}
+    .action-buttons{display:flex;gap:8px;}
+    .btn-action{padding:6px 10px;border:none;border-radius:5px;cursor:pointer;font-size:12px;transition:all 0.3s;}
+    .btn-edit{background-color:#eaf4ff;color:#1976d2;}
+    .btn-edit:hover{background-color:#d1e7ff;}
+    .btn-hapus{background-color:#ffeaea;color:#d32f2f;}
+    .btn-hapus:hover{background-color:#ffd1d1;}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.5);z-index:1000;justify-content:center;align-items:center;}
+    .modal-content{background-color:white;border-radius:12px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+    .modal-header{padding:20px 25px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;}
+    .modal-header h2{font-size:22px;font-weight:600;position:relative;}
+    .modal-header h2::before{content:"";position:absolute;left:-15px;top:50%;transform:translateY(-50%);width:5px;height:25px;background-color:#f4ce14;border-radius:3px;}
+    .close-modal{background:none;border:none;font-size:24px;cursor:pointer;color:#777;transition:color 0.3s;}
+    .close-modal:hover{color:#333;}
+    .modal-body{padding:25px;}
+    .form-group{margin-bottom:20px;}
+    .form-group label{display:block;margin-bottom:8px;font-weight:500;color:#333;}
+    .form-control{width:100%;padding:10px 15px;border:1px solid #ddd;border-radius:8px;font-size:14px;}
+    .modal-footer{padding:20px 25px;border-top:1px solid #eee;display:flex;justify-content:flex-end;gap:10px;}
+    .btn{padding:10px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:500;}
+    .btn-secondary{background-color:#f5f5f5;color:#333;}
+    .btn-primary{background-color:#000;color:white;}
+    .btn-primary:hover{background-color:#333;}
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Pengelolaan Rapat</h2>
+    <div class="menu">
+      <a href="dashboard admin.html"><i class="fas fa-home"></i> Home</a>
+      <a href="jadwal admin.html" class="active"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="peserta admin .html"><i class="fas fa-user-graduate"></i> Peserta</a>
+      <a href="notulen admin.html"><i class="fas fa-file-alt"></i> Notulen</a>
+      
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="topbar">
+      <h1>Jadwal Rapat</h1>
+      <div class="search-box">
+        <input type="text" placeholder="Search..." id="searchInput">
+        <i class="fas fa-search"></i>
+      </div>
+    </div>
+
+    <div class="jadwal-container">
+      <div class="jadwal-header">
+        <h2>Daftar Rapat</h2>
+        <button class="btn-tambah" id="btnTambahRapat"><i class="fas fa-plus"></i> Tambah Rapat</button>
+      </div>
+
+      <table class="jadwal-table">
+        <thead>
+          <tr>
+            <th>Nama Rapat</th>
+            <th>Tanggal</th>
+            <th>Waktu</th>
+            <th>Lokasi</th>
+            <th>Pemimpin</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr>
+            <td>Rapat Koordinasi Tim IT</td>
+            <td>15 Des 2023</td>
+            <td>09:00 - 11:00</td>
+            <td>Ruang Rapat A</td>
+            <td>Budi Santoso</td>
+            <td><span class="status-badge status-selesai">Selesai</span></td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</button>
+                <button class="btn-action btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Tambah/Edit -->
+  <div class="modal" id="modalTambahRapat">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Tambah Rapat Baru</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="formTambahRapat">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Nama Rapat *</label>
+            <input type="text" id="namaRapat" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Tanggal *</label>
+            <input type="date" id="tanggalRapat" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Waktu Mulai *</label>
+            <input type="time" id="waktuMulai" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Waktu Selesai *</label>
+            <input type="time" id="waktuSelesai" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Lokasi *</label>
+            <input type="text" id="lokasiRapat" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Pemimpin *</label>
+            <input type="text" id="pemimpinRapat" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btnBatal">Batal</button>
+          <button type="submit" class="btn btn-primary" id="btnSimpan">Simpan Rapat</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const modal = document.getElementById('modalTambahRapat');
+    const btnTambah = document.getElementById('btnTambahRapat');
+    const closeModal = document.querySelector('.close-modal');
+    const btnBatal = document.getElementById('btnBatal');
+    const form = document.getElementById('formTambahRapat');
+    const tableBody = document.getElementById('tableBody');
+    const modalTitle = document.getElementById('modalTitle');
+    const btnSimpan = document.getElementById('btnSimpan');
+
+    let editRow = null; // untuk menyimpan baris yang sedang diedit
+
+    function openModal(isEdit = false, row = null) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+      if (isEdit && row) {
+        modalTitle.textContent = 'Edit Rapat';
+        btnSimpan.textContent = 'Perbarui Rapat';
+        editRow = row;
+
+        const cells = row.cells;
+        document.getElementById('namaRapat').value = cells[0].textContent;
+        document.getElementById('tanggalRapat').value = '2023-12-15';
+        document.getElementById('waktuMulai').value = '09:00';
+        document.getElementById('waktuSelesai').value = '11:00';
+        document.getElementById('lokasiRapat').value = cells[3].textContent;
+        document.getElementById('pemimpinRapat').value = cells[4].textContent;
+      } else {
+        modalTitle.textContent = 'Tambah Rapat Baru';
+        btnSimpan.textContent = 'Simpan Rapat';
+        editRow = null;
+        form.reset();
+      }
+    }
+
+    function closeModalFunc() {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    btnTambah.addEventListener('click', () => openModal());
+    closeModal.addEventListener('click', closeModalFunc);
+    btnBatal.addEventListener('click', closeModalFunc);
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nama = document.getElementById('namaRapat').value;
+      const tanggal = document.getElementById('tanggalRapat').value;
+      const waktuMulai = document.getElementById('waktuMulai').value;
+      const waktuSelesai = document.getElementById('waktuSelesai').value;
+      const lokasi = document.getElementById('lokasiRapat').value;
+      const pemimpin = document.getElementById('pemimpinRapat').value;
+
+      if (editRow) {
+        editRow.cells[0].textContent = nama;
+        editRow.cells[1].textContent = tanggal;
+        editRow.cells[2].textContent = `${waktuMulai} - ${waktuSelesai}`;
+        editRow.cells[3].textContent = lokasi;
+        editRow.cells[4].textContent = pemimpin;
+        alert('Data rapat berhasil diperbarui!');
+      } else {
+        const row = tableBody.insertRow();
+        row.innerHTML = `
+          <td>${nama}</td>
+          <td>${tanggal}</td>
+          <td>${waktuMulai} - ${waktuSelesai}</td>
+          <td>${lokasi}</td>
+          <td>${pemimpin}</td>
+          <td><span class="status-badge status-mendatang">Mendatang</span></td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn-action btn-hapus"><i class="fas fa-trash"></i> Hapus</button>
+            </div>
+          </td>`;
+        attachRowEvents(row);
+        alert('Rapat baru berhasil ditambahkan!');
+      }
+      closeModalFunc();
+      form.reset();
+    });
+
+    function attachRowEvents(row) {
+      row.querySelector('.btn-edit').addEventListener('click', () => openModal(true, row));
+      row.querySelector('.btn-hapus').addEventListener('click', () => {
+        if (confirm('Apakah Anda yakin ingin menghapus rapat ini?')) row.remove();
+      });
+    }
+
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        openModal(true, row);
+      });
+    });
+    document.querySelectorAll('.btn-hapus').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const row = e.target.closest('tr');
+        if (confirm('Apakah Anda yakin ingin menghapus rapat ini?')) row.remove();
+      });
+    });
+  </script>
+</body>
+</html>
