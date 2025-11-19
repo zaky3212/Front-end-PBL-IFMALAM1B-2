@@ -3,14 +3,12 @@
 $host = "localhost";
 $username = "root";
 $password = "";
-$database = "db_admin";
+$database = "meeting_management";
 
 $koneksi = mysqli_connect($host, $username, $password, $database);
 
 // Cek koneksi
 if (!$koneksi) {
     die("Koneksi gagal: " . mysqli_connect_error());
-} else {
-    echo "Koneksi database berhasil!";
-}
+} else 
 ?>

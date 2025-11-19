@@ -1,4 +1,134 @@
-<?php include '../koneksi.php'; ?>
+<?php 
+include '../koneksi.php';
+
+// Fungsi untuk mendapatkan data peserta dari database
+function getParticipants($koneksi) {
+    $sql = "SELECT * FROM participant ORDER BY id DESC";
+    $result = mysqli_query($koneksi, $sql);
+    
+    $participants = [];
+    if ($result && mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $participants[] = $row;
+        }
+    }
+    return $participants;
+}
+
+// Fungsi untuk menambahkan peserta ke database
+function addParticipant($koneksi, $data) {
+    $name = mysqli_real_escape_string($koneksi, $data['name']);
+    $email = mysqli_real_escape_string($koneksi, $data['email']);
+    $department = mysqli_real_escape_string($koneksi, $data['department']);
+    $position = mysqli_real_escape_string($koneksi, $data['position']);
+    $phone = mysqli_real_escape_string($koneksi, $data['phone']);
+    $created_at = date('Y-m-d H:i:s');
+
+    $sql = "INSERT INTO participant (name, email, department, position, phone, created_at) 
+            VALUES ('$name', '$email', '$department', '$position', '$phone', '$created_at')";
+    
+    return mysqli_query($koneksi, $sql);
+}
+
+// Fungsi untuk mengupdate peserta di database
+function updateParticipant($koneksi, $id, $data) {
+    $name = mysqli_real_escape_string($koneksi, $data['name']);
+    $email = mysqli_real_escape_string($koneksi, $data['email']);
+    $department = mysqli_real_escape_string($koneksi, $data['department']);
+    $position = mysqli_real_escape_string($koneksi, $data['position']);
+    $phone = mysqli_real_escape_string($koneksi, $data['phone']);
+    $created_at = date('Y-m-d H:i:s');
+
+    $sql = "UPDATE participant SET 
+            name = '$name',
+            email = '$email',
+            department = '$department',
+            position = '$position',
+            phone = '$phone',
+            created_at = '$created_at'
+            WHERE id = $id";
+    
+    return mysqli_query($koneksi, $sql);
+}
+
+// Fungsi untuk menghapus peserta dari database
+function deleteParticipant($koneksi, $id) {
+    $sql = "DELETE FROM participant WHERE id = $id";
+    return mysqli_query($koneksi, $sql);
+}
+
+// Proses form tambah/edit peserta
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        $action = $_POST['action'];
+        
+        $data = [
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'department' => $_POST['department'],
+            'position' => $_POST['position'],
+            'phone' => $_POST['phone']
+        ];
+        
+        if ($action === 'tambah') {
+            if (addParticipant($koneksi, $data)) {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
+                exit();
+            } else {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?error=1");
+                exit();
+            }
+        } elseif ($action === 'edit' && isset($_POST['id'])) {
+            $id = intval($_POST['id']);
+            if (updateParticipant($koneksi, $id, $data)) {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?success=2");
+                exit();
+            } else {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?error=2");
+                exit();
+            }
+        }
+    }
+}
+
+// Proses hapus peserta
+if (isset($_GET['hapus'])) {
+    $id = intval($_GET['hapus']);
+    if (deleteParticipant($koneksi, $id)) {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?success=3");
+        exit();
+    } else {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?error=3");
+        exit();
+    }
+}
+
+// Ambil data peserta dari database
+$participants = getParticipants($koneksi);
+
+// Hitung statistik
+$totalPeserta = count($participants);
+
+// Pesan sukses/error
+$success_msg = "";
+$error_msg = "";
+
+if (isset($_GET['success'])) {
+    switch ($_GET['success']) {
+        case '1': $success_msg = "Peserta berhasil ditambahkan!"; break;
+        case '2': $success_msg = "Peserta berhasil diperbarui!"; break;
+        case '3': $success_msg = "Peserta berhasil dihapus!"; break;
+    }
+}
+
+if (isset($_GET['error'])) {
+    switch ($_GET['error']) {
+        case '1': $error_msg = "Gagal menambahkan peserta!"; break;
+        case '2': $error_msg = "Gagal memperbarui peserta!"; break;
+        case '3': $error_msg = "Gagal menghapus peserta!"; break;
+    }
+}
+?>
 
 <!DOCTYPE html>
 <html lang="id">
@@ -247,28 +377,6 @@
       border-bottom: none;
     }
 
-    .status-badge {
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .status-aktif {
-      background-color: #e6f7e6;
-      color: #2e7d32;
-    }
-
-    .status-nonaktif {
-      background-color: #ffeaea;
-      color: #d32f2f;
-    }
-
-    .status-pending {
-      background-color: #fff8e5;
-      color: #f57c00;
-    }
-
     .action-buttons {
       display: flex;
       gap: 8px;
@@ -281,15 +389,6 @@
       cursor: pointer;
       font-size: 12px;
       transition: all 0.3s;
-    }
-
-    .btn-view {
-      background-color: #eaf4ff;
-      color: #1976d2;
-    }
-
-    .btn-view:hover {
-      background-color: #d1e7ff;
     }
 
     .btn-edit {
@@ -553,6 +652,26 @@
       color: #666;
     }
 
+    /* Alert Messages */
+    .alert {
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background-color: #e6f7e6;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+
+    .alert-error {
+      background-color: #ffeaea;
+      color: #d32f2f;
+      border: 1px solid #ffcdd2;
+    }
+
     @media (max-width: 768px) {
       .sidebar { display: none; }
       .main { padding: 20px; }
@@ -574,11 +693,10 @@
   <div class="sidebar">
     <h2>Pengelolaan Rapat</h2>
     <div class="menu">
-      <a href="dashboard admin.php"><i class="fas fa-home"></i> Home</a>
-      <a href="jadwal admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
-      <a href="peserta admin .php" class="active"><i class="fas fa-user-graduate"></i> Peserta</a>
-      <a href="notulen admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
-      
+      <a href="dashboard_admin.php"><i class="fas fa-home"></i> Home</a>
+      <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="peserta_admin.php" class="active"><i class="fas fa-user-graduate"></i> Peserta</a>
+      <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
     </div>
   </div>
 
@@ -588,22 +706,27 @@
       <h1>Peserta Rapat</h1>
       <div class="right">
         <div class="search-box">
-          <input type="text" placeholder="Search peserta...">
+          <input type="text" placeholder="Search peserta..." id="searchInput">
           <i class="fas fa-search"></i>
         </div>
         <i class="fas fa-bell bell"></i>
       </div>
     </div>
 
+    <!-- Alert Messages -->
+    <?php if (!empty($success_msg)): ?>
+      <div class="alert alert-success"><?php echo $success_msg; ?></div>
+    <?php endif; ?>
+    
+    <?php if (!empty($error_msg)): ?>
+      <div class="alert alert-error"><?php echo $error_msg; ?></div>
+    <?php endif; ?>
+
     <!-- Stats Cards -->
     <div class="stats-cards">
       <div class="stat-card">
-        <div class="stat-number" id="totalPeserta">0</div>
+        <div class="stat-number" id="totalPeserta"><?php echo $totalPeserta; ?></div>
         <div class="stat-label">Total Peserta</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="pesertaAktif">0</div>
-        <div class="stat-label">Peserta Aktif</div>
       </div>
       <div class="stat-card">
         <div class="stat-number" id="totalRapat">0</div>
@@ -648,12 +771,6 @@
       <!-- Tools Section -->
       <div class="tools-section">
         <div class="filter-group">
-          <select class="filter-select" id="filterStatus">
-            <option value="all">Semua Status</option>
-            <option value="aktif">Aktif</option>
-            <option value="nonaktif">Nonaktif</option>
-            <option value="pending">Pending</option>
-          </select>
           <select class="filter-select" id="filterDepartemen">
             <option value="all">Semua Departemen</option>
             <option value="it">IT</option>
@@ -661,12 +778,6 @@
             <option value="marketing">Marketing</option>
             <option value="keuangan">Keuangan</option>
             <option value="operasional">Operasional</option>
-          </select>
-          <select class="filter-select" id="filterRapat">
-            <option value="all">Semua Rapat</option>
-            <option value="rapat-koordinasi">Rapat Koordinasi</option>
-            <option value="rapat-evaluasi">Rapat Evaluasi</option>
-            <option value="rapat-perencanaan">Rapat Perencanaan</option>
           </select>
         </div>
         <div class="action-tools">
@@ -687,13 +798,43 @@
             <th>Email</th>
             <th>Departemen</th>
             <th>Jabatan</th>
-            <th>Status</th>
-            <th>Kehadiran</th>
+            <th>Telepon</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody id="tableBody">
-          <!-- Data akan diisi oleh JavaScript -->
+          <?php if (count($participants) > 0): ?>
+            <?php foreach ($participants as $participant): ?>
+              <tr>
+                <td><?php echo htmlspecialchars($participant['name']); ?></td>
+                <td><?php echo htmlspecialchars($participant['email']); ?></td>
+                <td><?php echo htmlspecialchars($participant['department']); ?></td>
+                <td><?php echo htmlspecialchars($participant['position']); ?></td>
+                <td><?php echo htmlspecialchars($participant['phone']); ?></td>
+                <td>
+                  <div class="action-buttons">
+                    <button class="btn-action btn-edit" 
+                            data-id="<?php echo $participant['id']; ?>"
+                            data-name="<?php echo htmlspecialchars($participant['name']); ?>"
+                            data-email="<?php echo htmlspecialchars($participant['email']); ?>"
+                            data-department="<?php echo htmlspecialchars($participant['department']); ?>"
+                            data-position="<?php echo htmlspecialchars($participant['position']); ?>"
+                            data-phone="<?php echo htmlspecialchars($participant['phone']); ?>">
+                      <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <a href="?hapus=<?php echo $participant['id']; ?>" class="btn-action btn-delete" 
+                       onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?')">
+                      <i class="fas fa-trash"></i> Hapus
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="6" style="text-align: center;">Tidak ada data peserta</td>
+            </tr>
+          <?php endif; ?>
         </tbody>
       </table>
     </div>
@@ -706,24 +847,25 @@
         <h2 id="modalTitle">Tambah Peserta Baru</h2>
         <button class="close-modal">&times;</button>
       </div>
-      <form id="formPeserta">
-        <input type="hidden" id="pesertaId">
+      <form id="formPeserta" method="POST" action="">
+        <input type="hidden" id="action" name="action" value="tambah">
+        <input type="hidden" id="participantId" name="id" value="">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
-              <label for="namaPeserta">Nama Lengkap *</label>
-              <input type="text" id="namaPeserta" class="form-control" placeholder="Masukkan nama lengkap" required>
+              <label for="name">Nama Lengkap *</label>
+              <input type="text" id="name" name="name" class="form-control" placeholder="Masukkan nama lengkap" required>
             </div>
             <div class="form-group">
-              <label for="emailPeserta">Email *</label>
-              <input type="email" id="emailPeserta" class="form-control" placeholder="Masukkan email" required>
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="Masukkan email" required>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="departemenPeserta">Departemen *</label>
-              <select id="departemenPeserta" class="form-control" required>
+              <label for="department">Departemen *</label>
+              <select id="department" name="department" class="form-control" required>
                 <option value="">Pilih Departemen</option>
                 <option value="it">IT</option>
                 <option value="hrd">HRD</option>
@@ -734,34 +876,16 @@
               </select>
             </div>
             <div class="form-group">
-              <label for="jabatanPeserta">Jabatan *</label>
-              <input type="text" id="jabatanPeserta" class="form-control" placeholder="Masukkan jabatan" required>
+              <label for="position">Jabatan *</label>
+              <input type="text" id="position" name="position" class="form-control" placeholder="Masukkan jabatan" required>
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="teleponPeserta">Nomor Telepon</label>
-              <input type="tel" id="teleponPeserta" class="form-control" placeholder="Masukkan nomor telepon">
+              <label for="phone">Nomor Telepon</label>
+              <input type="tel" id="phone" name="phone" class="form-control" placeholder="Masukkan nomor telepon">
             </div>
-            <div class="form-group">
-              <label for="statusPeserta">Status</label>
-              <select id="statusPeserta" class="form-control">
-                <option value="aktif">Aktif</option>
-                <option value="nonaktif">Nonaktif</option>
-                <option value="pending">Pending</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="alamatPeserta">Alamat</label>
-            <textarea id="alamatPeserta" class="form-control" placeholder="Masukkan alamat" rows="2"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="keteranganPeserta">Keterangan Tambahan</label>
-            <textarea id="keteranganPeserta" class="form-control" placeholder="Masukkan keterangan tambahan" rows="2"></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -773,86 +897,15 @@
   </div>
 
   <script>
-    // Data peserta (simulasi database)
-    let dataPeserta = [
-      {
-        id: 1,
-        nama: "Ahmad Wijaya",
-        email: "ahmad.wijaya@company.com",
-        departemen: "it",
-        jabatan: "Software Developer",
-        telepon: "081234567890",
-        status: "aktif",
-        alamat: "Jl. Merdeka No. 123, Jakarta",
-        keterangan: "Peserta aktif dan selalu hadir dalam rapat",
-        kehadiran: "95%"
-      },
-      {
-        id: 2,
-        nama: "Sari Indah",
-        email: "sari.indah@company.com",
-        departemen: "hrd",
-        jabatan: "HR Manager",
-        telepon: "081234567891",
-        status: "aktif",
-        alamat: "Jl. Sudirman No. 45, Jakarta",
-        keterangan: "Koordinator rapat internal",
-        kehadiran: "100%"
-      },
-      {
-        id: 3,
-        nama: "Budi Santoso",
-        email: "budi.santoso@company.com",
-        departemen: "marketing",
-        jabatan: "Marketing Manager",
-        telepon: "081234567892",
-        status: "aktif",
-        alamat: "Jl. Thamrin No. 67, Jakarta",
-        keterangan: "Pemimpin rapat marketing",
-        kehadiran: "90%"
-      },
-      {
-        id: 4,
-        nama: "Dewi Lestari",
-        email: "dewi.lestari@company.com",
-        departemen: "keuangan",
-        jabatan: "Finance Manager",
-        telepon: "081234567893",
-        status: "nonaktif",
-        alamat: "Jl. Gatot Subroto No. 89, Jakarta",
-        keterangan: "Sedang cuti panjang",
-        kehadiran: "75%"
-      },
-      {
-        id: 5,
-        nama: "Rizki Pratama",
-        email: "rizki.pratama@company.com",
-        departemen: "operasional",
-        jabatan: "Operations Manager",
-        telepon: "081234567894",
-        status: "pending",
-        alamat: "Jl. Asia Afrika No. 12, Jakarta",
-        keterangan: "Baru bergabung",
-        kehadiran: "60%"
-      }
-    ];
-
-    // Data rapat untuk statistik
-    let dataRapat = [
-      { id: 1, nama: "Rapat Koordinasi Tim IT", tanggal: "2023-12-15" },
-      { id: 2, nama: "Rapat Evaluasi Proyek Q4", tanggal: "2023-12-18" },
-      { id: 3, nama: "Rapat Perencanaan 2024", tanggal: "2023-12-20" }
-    ];
-
     // Elemen DOM
     const modalPeserta = document.getElementById('modalPeserta');
     const btnTambahPeserta = document.getElementById('btnTambahPeserta');
     const closeModal = document.querySelector('.close-modal');
     const btnBatal = document.getElementById('btnBatal');
     const formPeserta = document.getElementById('formPeserta');
-    const tableBody = document.getElementById('tableBody');
     const modalTitle = document.getElementById('modalTitle');
-    const pesertaIdInput = document.getElementById('pesertaId');
+    const actionInput = document.getElementById('action');
+    const participantIdInput = document.getElementById('participantId');
     const btnSubmit = document.getElementById('btnSubmit');
 
     // Calendar elements
@@ -861,13 +914,11 @@
     const nextMonthBtn = document.getElementById('nextMonth');
     const calendarGrid = document.querySelector('.calendar-grid');
 
-    let editMode = false;
-    let currentEditId = null;
     let currentDate = new Date();
 
     // Fungsi untuk membuka modal tambah
     btnTambahPeserta.addEventListener('click', function() {
-      editMode = false;
+      actionInput.value = "tambah";
       modalTitle.textContent = "Tambah Peserta Baru";
       btnSubmit.textContent = "Simpan Peserta";
       formPeserta.reset();
@@ -876,35 +927,38 @@
     });
 
     // Fungsi untuk membuka modal edit
-    function bukaModalEdit(id) {
-      editMode = true;
-      modalTitle.textContent = "Edit Peserta";
-      btnSubmit.textContent = "Update Peserta";
-      
-      const peserta = dataPeserta.find(item => item.id === id);
-      if (peserta) {
-        pesertaIdInput.value = peserta.id;
-        document.getElementById('namaPeserta').value = peserta.nama;
-        document.getElementById('emailPeserta').value = peserta.email;
-        document.getElementById('departemenPeserta').value = peserta.departemen;
-        document.getElementById('jabatanPeserta').value = peserta.jabatan;
-        document.getElementById('teleponPeserta').value = peserta.telepon || '';
-        document.getElementById('statusPeserta').value = peserta.status;
-        document.getElementById('alamatPeserta').value = peserta.alamat || '';
-        document.getElementById('keteranganPeserta').value = peserta.keterangan || '';
+    document.querySelectorAll('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const data = {
+          id: this.getAttribute('data-id'),
+          name: this.getAttribute('data-name'),
+          email: this.getAttribute('data-email'),
+          department: this.getAttribute('data-department'),
+          position: this.getAttribute('data-position'),
+          phone: this.getAttribute('data-phone')
+        };
+
+        actionInput.value = "edit";
+        modalTitle.textContent = "Edit Peserta";
+        btnSubmit.textContent = "Update Peserta";
+        
+        participantIdInput.value = data.id;
+        document.getElementById('name').value = data.name;
+        document.getElementById('email').value = data.email;
+        document.getElementById('department').value = data.department;
+        document.getElementById('position').value = data.position;
+        document.getElementById('phone').value = data.phone;
         
         modalPeserta.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-      }
-    }
+      });
+    });
 
     // Fungsi untuk menutup modal
     function tutupModal() {
       modalPeserta.style.display = 'none';
       document.body.style.overflow = 'auto';
       formPeserta.reset();
-      editMode = false;
-      currentEditId = null;
     }
 
     closeModal.addEventListener('click', tutupModal);
@@ -915,138 +969,6 @@
       if (event.target === modalPeserta) {
         tutupModal();
       }
-    });
-
-    // Format nama departemen
-    function formatDepartemen(departemen) {
-      const departemenMap = {
-        'it': 'IT',
-        'hrd': 'HRD',
-        'marketing': 'Marketing',
-        'keuangan': 'Keuangan',
-        'operasional': 'Operasional',
-        'lainnya': 'Lainnya'
-      };
-      return departemenMap[departemen] || departemen;
-    }
-
-    // Update statistik
-    function updateStatistik() {
-      const totalPeserta = dataPeserta.length;
-      const pesertaAktif = dataPeserta.filter(p => p.status === 'aktif').length;
-      const totalRapat = dataRapat.length;
-      
-      // Hitung rata-rata kehadiran
-      const totalKehadiran = dataPeserta.reduce((sum, peserta) => {
-        const kehadiran = parseInt(peserta.kehadiran) || 0;
-        return sum + kehadiran;
-      }, 0);
-      const rataKehadiran = totalPeserta > 0 ? Math.round(totalKehadiran / totalPeserta) : 0;
-
-      document.getElementById('totalPeserta').textContent = totalPeserta;
-      document.getElementById('pesertaAktif').textContent = pesertaAktif;
-      document.getElementById('totalRapat').textContent = totalRapat;
-      document.getElementById('kehadiranRata').textContent = `${rataKehadiran}%`;
-    }
-
-    // Update tampilan tabel
-    function updateTampilanTabel() {
-      tableBody.innerHTML = '';
-      
-      dataPeserta.forEach(peserta => {
-        const statusText = peserta.status === 'aktif' ? 'Aktif' : 
-                          peserta.status === 'nonaktif' ? 'Nonaktif' : 'Pending';
-        const statusClass = `status-${peserta.status}`;
-        
-        const row = document.createElement('tr');
-        row.setAttribute('data-id', peserta.id);
-        row.innerHTML = `
-          <td>${peserta.nama}</td>
-          <td>${peserta.email}</td>
-          <td>${formatDepartemen(peserta.departemen)}</td>
-          <td>${peserta.jabatan}</td>
-          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-          <td>${peserta.kehadiran}</td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn-action btn-edit" data-id="${peserta.id}"><i class="fas fa-edit"></i> Edit</button>
-              <button class="btn-action btn-delete" data-id="${peserta.id}"><i class="fas fa-trash"></i> Hapus</button>
-            </div>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
-      
-      // Tambahkan event listener untuk tombol aksi
-      attachEventListeners();
-    }
-
-    // Attach event listeners untuk tombol aksi
-    function attachEventListeners() {
-      document.querySelectorAll('.btn-edit').forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          const id = parseInt(this.getAttribute('data-id'));
-          bukaModalEdit(id);
-        });
-      });
-
-      document.querySelectorAll('.btn-delete').forEach(button => {
-        button.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          
-          const id = parseInt(this.getAttribute('data-id'));
-          const peserta = dataPeserta.find(item => item.id === id);
-          if (peserta && confirm(`Apakah Anda yakin ingin menghapus peserta: ${peserta.nama}?`)) {
-            dataPeserta = dataPeserta.filter(item => item.id !== id);
-            updateTampilanTabel();
-            updateStatistik();
-            alert(`Peserta "${peserta.nama}" berhasil dihapus!`);
-          }
-        });
-      });
-    }
-
-    // Handle form submit (tambah dan edit)
-    formPeserta.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const formData = {
-        nama: document.getElementById('namaPeserta').value,
-        email: document.getElementById('emailPeserta').value,
-        departemen: document.getElementById('departemenPeserta').value,
-        jabatan: document.getElementById('jabatanPeserta').value,
-        telepon: document.getElementById('teleponPeserta').value,
-        status: document.getElementById('statusPeserta').value,
-        alamat: document.getElementById('alamatPeserta').value,
-        keterangan: document.getElementById('keteranganPeserta').value,
-        kehadiran: "85%" // Default value
-      };
-
-      if (editMode) {
-        // Edit mode
-        const id = parseInt(pesertaIdInput.value);
-        const index = dataPeserta.findIndex(item => item.id === id);
-        if (index !== -1) {
-          dataPeserta[index] = { ...dataPeserta[index], ...formData };
-          alert(`Peserta "${formData.nama}" berhasil diperbarui!`);
-        }
-      } else {
-        // Tambah mode
-        const newId = dataPeserta.length > 0 ? Math.max(...dataPeserta.map(item => item.id)) + 1 : 1;
-        dataPeserta.push({
-          id: newId,
-          ...formData
-        });
-        alert(`Peserta "${formData.nama}" berhasil ditambahkan!`);
-      }
-
-      updateTampilanTabel();
-      updateStatistik();
-      tutupModal();
     });
 
     // Calendar functions
@@ -1114,7 +1036,7 @@
     });
 
     // Fungsi untuk menangani pencarian
-    document.querySelector('.search-box input').addEventListener('input', function(e) {
+    document.getElementById('searchInput').addEventListener('input', function(e) {
       const searchTerm = e.target.value.toLowerCase();
       const rows = document.querySelectorAll('.peserta-table tbody tr');
       
@@ -1128,14 +1050,14 @@
       });
     });
 
-    // Fungsi untuk filter berdasarkan status
-    document.getElementById('filterStatus').addEventListener('change', function(e) {
-      const status = e.target.value;
+    // Fungsi untuk filter berdasarkan departemen
+    document.getElementById('filterDepartemen').addEventListener('change', function(e) {
+      const departemen = e.target.value;
       const rows = document.querySelectorAll('.peserta-table tbody tr');
       
       rows.forEach(row => {
-        const statusCell = row.querySelector('.status-badge');
-        if (status === 'all' || statusCell.classList.contains(`status-${status}`)) {
+        const departemenCell = row.cells[2]; // Kolom departemen adalah index 2
+        if (departemen === 'all' || departemenCell.textContent.toLowerCase() === departemen) {
           row.style.display = '';
         } else {
           row.style.display = 'none';
@@ -1155,8 +1077,6 @@
     });
 
     // Inisialisasi
-    updateTampilanTabel();
-    updateStatistik();
     renderCalendar();
   </script>
 </body>

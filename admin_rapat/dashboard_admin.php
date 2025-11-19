@@ -192,10 +192,10 @@
   <div class="sidebar">
     <h2>Pengelolaan Rapat</h2>
     <div class="menu">
-      <a href="dashboard admin.php" class="active"><i class="fas fa-home"></i> Home</a>
-      <a href="jadwal admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
-      <a href="peserta admin .php"><i class="fas fa-user-graduate"></i> Peserta</a>
-      <a href="notulen admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
+      <a href="dashboard_admin.php" class="active"><i class="fas fa-home"></i> Home</a>
+      <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
+      <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
    
     </div>
   </div>
