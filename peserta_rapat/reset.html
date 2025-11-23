@@ -40,3 +40,41 @@
   </script>
 </body>
 </html>
+
+    <!-- Calendar Section -->
+    <div class="calendar-section">
+      <div class="calendar-header">
+        <h3 id="calendarMonth">Desember 2023</h3>
+        <div class="calendar-nav">
+          <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+          <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+      <div class="calendar-grid">
+        <div class="calendar-day">Sen</div>
+        <div class="calendar-day">Sel</div>
+        <div class="calendar-day">Rab</div>
+        <div class="calendar-day">Kam</div>
+        <div class="calendar-day">Jum</div>
+        <div class="calendar-day">Sab</div>
+        <div class="calendar-day">Min</div>
+        <!-- Calendar dates will be populated by JavaScript -->
+      </div>
+    </div>
+
+        <!-- Stats Cards -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-number" id="totalPeserta"><?php echo $totalPeserta; ?></div>
+        <div class="stat-label">Total Peserta</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalRapat">0</div>
+        <div class="stat-label">Total Rapat</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="kehadiranRata">0%</div>
+        <div class="stat-label">Rata-rata Kehadiran</div>
+      </div>
+    </div>
+

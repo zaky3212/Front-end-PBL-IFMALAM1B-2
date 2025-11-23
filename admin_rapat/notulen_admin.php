@@ -524,7 +524,6 @@
       <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
       <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
       <a href="notulen_admin.php" class="active"><i class="fas fa-file-alt"></i> Notulen</a>
-     
     </div>
   </div>
 
@@ -582,7 +581,7 @@
         <thead>
           <tr>
             <th>Judul Notulen</th>
-            <th>Nama Rapat</th>
+            <th>Agenda</th>
             <th>Tanggal</th>
             <th>Pembuat</th>
             <th>Status</th>
@@ -590,7 +589,35 @@
           </tr>
         </thead>
         <tbody id="tableBody">
-          <!-- Data akan diisi oleh JavaScript -->
+          <?php
+          // Ambil data dari database
+          $query = "SELECT * FROM minutes ORDER BY created_at DESC";
+          $result = mysqli_query($koneksi, $query);
+          
+          while ($row = mysqli_fetch_assoc($result)) {
+            $statusClass = 'status-draft';
+            $statusText = 'Draft';
+            
+            // Potong teks agenda jika terlalu panjang
+            $agenda = strlen($row['agenda']) > 50 ? substr($row['agenda'], 0, 50) . '...' : $row['agenda'];
+            
+            echo "<tr data-id='{$row['id']}'>
+              <td>{$row['title']}</td>
+              <td>{$agenda}</td>
+              <td>" . date('d M Y', strtotime($row['created_at'])) . "</td>
+              <td>{$row['created_by']}</td>
+              <td><span class='status-badge {$statusClass}'>{$statusText}</span></td>
+              <td>
+                <div class='action-buttons'>
+                  <button class='btn-action btn-view' data-id='{$row['id']}'><i class='fas fa-eye'></i> Lihat</button>
+                  <button class='btn-action btn-edit' data-id='{$row['id']}'><i class='fas fa-edit'></i> Edit</button>
+                  <button class='btn-action btn-download' data-id='{$row['id']}'><i class='fas fa-download'></i> Unduh</button>
+                  <button class='btn-action btn-delete' data-id='{$row['id']}'><i class='fas fa-trash'></i> Hapus</button>
+                </div>
+              </td>
+            </tr>";
+          }
+          ?>
         </tbody>
       </table>
     </div>
@@ -603,63 +630,38 @@
         <h2 id="modalTitle">Tambah Notulen Baru</h2>
         <button class="close-modal">&times;</button>
       </div>
-      <form id="formNotulen">
-        <input type="hidden" id="notulenId">
+      <form id="formNotulen" action="proses_tambah_notulen.php" method="POST">
+        <input type="hidden" id="notulenId" name="id">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
               <label for="judulNotulen">Judul Notulen *</label>
-              <input type="text" id="judulNotulen" class="form-control" placeholder="Masukkan judul notulen" required>
+              <input type="text" id="judulNotulen" name="title" class="form-control" placeholder="Masukkan judul notulen" required>
             </div>
-            <div class="form-group">
-              <label for="rapat">Pilih Rapat *</label>
-              <select id="rapat" class="form-control" required>
-                <option value="">Pilih rapat</option>
-                <option value="1">Rapat Koordinasi Tim IT - 15 Des 2023</option>
-                <option value="2">Rapat Evaluasi Proyek Q4 - 18 Des 2023</option>
-                <option value="3">Rapat Perencanaan 2024 - 20 Des 2023</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row">
             <div class="form-group">
               <label for="pembuatNotulen">Pembuat Notulen *</label>
-              <input type="text" id="pembuatNotulen" class="form-control" placeholder="Nama pembuat notulen" required>
-            </div>
-            <div class="form-group">
-              <label for="statusNotulen">Status</label>
-              <select id="statusNotulen" class="form-control">
-                <option value="draft">Draft</option>
-                <option value="review">Review</option>
-                <option value="selesai">Selesai</option>
-              </select>
+              <input type="text" id="pembuatNotulen" name="created_by" class="form-control" placeholder="Nama pembuat notulen" required>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="agendaRapat">Agenda Rapat</label>
-            <textarea id="agendaRapat" class="form-control" placeholder="Masukkan agenda rapat" rows="3"></textarea>
+            <label for="agendaRapat">Agenda Rapat *</label>
+            <textarea id="agendaRapat" name="agenda" class="form-control" placeholder="Masukkan agenda rapat" rows="3" required></textarea>
           </div>
 
           <div class="form-group">
-            <label for="pembahasan">Pembahasan *</label>
-            <textarea id="pembahasan" class="form-control" placeholder="Ringkasan pembahasan dalam rapat" rows="5" required></textarea>
+            <label for="pembahasan">Pembahasan</label>
+            <textarea id="pembahasan" name="notes" class="form-control" placeholder="Ringkasan pembahasan dalam rapat" rows="5"></textarea>
           </div>
 
           <div class="form-group">
-            <label for="keputusan">Keputusan *</label>
-            <textarea id="keputusan" class="form-control" placeholder="Keputusan yang diambil dalam rapat" rows="3" required></textarea>
+            <label for="keputusan">Keputusan</label>
+            <textarea id="keputusan" name="decisions" class="form-control" placeholder="Keputusan yang diambil dalam rapat" rows="3"></textarea>
           </div>
 
           <div class="form-group">
-            <label for="tindakLanjut">Tindak Lanjut *</label>
-            <textarea id="tindakLanjut" class="form-control" placeholder="Tindak lanjut setelah rapat" rows="3" required></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="catatanTambahan">Catatan Tambahan</label>
-            <textarea id="catatanTambahan" class="form-control" placeholder="Catatan tambahan lainnya" rows="2"></textarea>
+            <label for="tindakLanjut">Tindak Lanjut</label>
+            <textarea id="tindakLanjut" name="follow_up" class="form-control" placeholder="Tindak lanjut setelah rapat" rows="3"></textarea>
           </div>
         </div>
         <div class="modal-footer">
@@ -692,52 +694,6 @@
   </div>
 
   <script>
-    // Data notulen (simulasi database)
-    let dataNotulen = [
-      {
-        id: 1,
-        judul: "Notulen Rapat Koordinasi Tim IT",
-        rapatId: 1,
-        rapatNama: "Rapat Koordinasi Tim IT",
-        tanggal: "2023-12-15",
-        pembuat: "Microsoft Admin",
-        status: "selesai",
-        agenda: "Koordinasi proyek pengembangan sistem baru, review progress tim, pembahasan kendala teknis",
-        pembahasan: "Tim IT membahas progress pengembangan sistem manajemen data. Beberapa kendala teknis terkait integrasi API telah diidentifikasi dan dicarikan solusinya.",
-        keputusan: "1. Menambah 2 developer untuk mempercepat pengembangan\n2. Meeting follow up dalam 2 minggu\n3. Budget tambahan disetujui untuk tools pendukung",
-        tindakLanjut: "1. Tim backend menyelesaikan integrasi API dalam 5 hari\n2. Tim frontend menyelesaikan UI/UX improvement\n3. Project manager membuat laporan progress mingguan",
-        catatan: "Rapat berjalan lancar dengan partisipasi aktif seluruh anggota tim."
-      },
-      {
-        id: 2,
-        judul: "Evaluasi Kinerja Q4 2023",
-        rapatId: 2,
-        rapatNama: "Rapat Evaluasi Proyek Q4",
-        tanggal: "2023-12-18",
-        pembuat: "Apple Admin",
-        status: "review",
-        agenda: "Evaluasi pencapaian target Q4, analisis KPI, pembahasan strategi improvement",
-        pembahasan: "Membahas pencapaian target kuartal 4 yang menunjukkan peningkatan 15% dibanding Q3. Beberapa area perlu improvement terutama dalam hal efisiensi waktu pengerjaan proyek.",
-        keputusan: "1. Menerapkan agile methodology untuk proyek berikutnya\n2. Training tambahan untuk tim technical\n3. Review ulang timeline proyek",
-        tindakLanjut: "1. HR menyusun jadwal training\n2. Project office merevisi template project planning\n3. Evaluasi follow up dalam 1 bulan",
-        catatan: "Perlu monitoring lebih ketat untuk proyek dengan complexity tinggi."
-      },
-      {
-        id: 3,
-        judul: "Rencana Strategis 2024",
-        rapatId: 3,
-        rapatNama: "Rapat Perencanaan 2024",
-        tanggal: "2023-12-20",
-        pembuat: "Personal Admin",
-        status: "draft",
-        agenda: "Penyusunan rencana strategis tahun 2024, alokasi budget, penentuan target bisnis",
-        pembahasan: "Membahas visi dan misi perusahaan untuk tahun 2024, dengan fokus pada digital transformation dan market expansion. Beberapa initiative baru diusulkan untuk meningkatkan competitive advantage.",
-        keputusan: "1. Menyetujui budget R&D sebesar 20% dari total budget\n2. Membuka 2 cabang baru di Q2 dan Q3 2024\n3. Merekrut 15 talenta baru di berbagai departemen",
-        tindakLanjut: "1. Finance menyusun detail budget per departemen\n2. HR membuat timeline rekrutmen\n3. Operations mempersiapkan plan untuk cabang baru",
-        catatan: "Draft awal, perlu review lebih lanjut oleh direksi."
-      }
-    ];
-
     // Elemen DOM
     const modalNotulen = document.getElementById('modalNotulen');
     const modalViewNotulen = document.getElementById('modalViewNotulen');
@@ -753,7 +709,6 @@
     const notulenViewContent = document.getElementById('notulenViewContent');
 
     let editMode = false;
-    let currentEditId = null;
 
     // Fungsi untuk membuka modal tambah
     btnTambahNotulen.addEventListener('click', function() {
@@ -771,18 +726,16 @@
       modalTitle.textContent = "Edit Notulen";
       btnSubmit.textContent = "Update Notulen";
       
-      const notulen = dataNotulen.find(item => item.id === id);
-      if (notulen) {
-        notulenIdInput.value = notulen.id;
-        document.getElementById('judulNotulen').value = notulen.judul;
-        document.getElementById('rapat').value = notulen.rapatId;
-        document.getElementById('pembuatNotulen').value = notulen.pembuat;
-        document.getElementById('statusNotulen').value = notulen.status;
-        document.getElementById('agendaRapat').value = notulen.agenda || '';
-        document.getElementById('pembahasan').value = notulen.pembahasan;
-        document.getElementById('keputusan').value = notulen.keputusan;
-        document.getElementById('tindakLanjut').value = notulen.tindakLanjut;
-        document.getElementById('catatanTambahan').value = notulen.catatan || '';
+      // Ambil data dari baris tabel
+      const row = document.querySelector(`tr[data-id="${id}"]`);
+      if (row) {
+        const cells = row.querySelectorAll('td');
+        notulenIdInput.value = id;
+        document.getElementById('judulNotulen').value = cells[0].textContent;
+        document.getElementById('pembuatNotulen').value = cells[3].textContent;
+        
+        // Untuk field lainnya, Anda perlu mengambil dari database via AJAX
+        // atau menyimpan data dalam atribut data-* pada baris tabel
         
         modalNotulen.style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -791,70 +744,45 @@
 
     // Fungsi untuk membuka modal view
     function bukaModalView(id) {
-      const notulen = dataNotulen.find(item => item.id === id);
-      if (notulen) {
+      // Dalam implementasi nyata, Anda akan mengambil data dari database via AJAX
+      // Di sini saya menggunakan data dari baris tabel sebagai contoh
+      const row = document.querySelector(`tr[data-id="${id}"]`);
+      if (row) {
+        const cells = row.querySelectorAll('td');
+        
         notulenViewContent.innerHTML = `
           <div class="info-group">
             <div class="info-label">Judul Notulen</div>
-            <div class="info-value">${notulen.judul}</div>
+            <div class="info-value">${cells[0].textContent}</div>
           </div>
           
           <div class="form-row">
             <div class="info-group" style="flex: 1;">
-              <div class="info-label">Nama Rapat</div>
-              <div class="info-value">${notulen.rapatNama}</div>
+              <div class="info-label">Agenda</div>
+              <div class="info-value">${cells[1].textContent}</div>
             </div>
             <div class="info-group" style="flex: 1;">
               <div class="info-label">Tanggal Rapat</div>
-              <div class="info-value">${formatTanggal(notulen.tanggal)}</div>
+              <div class="info-value">${cells[2].textContent}</div>
             </div>
           </div>
 
           <div class="form-row">
             <div class="info-group" style="flex: 1;">
               <div class="info-label">Pembuat Notulen</div>
-              <div class="info-value">${notulen.pembuat}</div>
+              <div class="info-value">${cells[3].textContent}</div>
             </div>
             <div class="info-group" style="flex: 1;">
               <div class="info-label">Status</div>
-              <div class="info-value"><span class="status-badge status-${notulen.status}">${notulen.status === 'selesai' ? 'Selesai' : notulen.status === 'review' ? 'Review' : 'Draft'}</span></div>
+              <div class="info-value">${cells[4].textContent}</div>
             </div>
           </div>
 
-          <div class="info-group">
-            <div class="info-label">Agenda Rapat</div>
-            <div class="info-value">${notulen.agenda || '-'}</div>
-          </div>
-
-          <div class="info-group">
-            <div class="info-label">Pembahasan</div>
-            <div class="info-value">${notulen.pembahasan}</div>
-          </div>
-
-          <div class="info-group">
-            <div class="info-label">Keputusan</div>
-            <div class="info-value">${formatTextWithLineBreaks(notulen.keputusan)}</div>
-          </div>
-
-          <div class="info-group">
-            <div class="info-label">Tindak Lanjut</div>
-            <div class="info-value">${formatTextWithLineBreaks(notulen.tindakLanjut)}</div>
-          </div>
-
-          <div class="info-group">
-            <div class="info-label">Catatan Tambahan</div>
-            <div class="info-value">${notulen.catatan || '-'}</div>
-          </div>
         `;
         
         modalViewNotulen.style.display = 'flex';
         document.body.style.overflow = 'hidden';
       }
-    }
-
-    // Format text dengan line breaks
-    function formatTextWithLineBreaks(text) {
-      return text.replace(/\n/g, '<br>');
     }
 
     // Fungsi untuk menutup modal
@@ -864,7 +792,6 @@
       document.body.style.overflow = 'auto';
       formNotulen.reset();
       editMode = false;
-      currentEditId = null;
     }
 
     closeModals.forEach(closeBtn => {
@@ -880,125 +807,43 @@
       }
     });
 
-    // Format tanggal untuk ditampilkan
-    function formatTanggal(tanggal) {
-      const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      return new Date(tanggal).toLocaleDateString('id-ID', options);
-    }
-
-    // Update tampilan tabel
-    function updateTampilanTabel() {
-      tableBody.innerHTML = '';
-      dataNotulen.forEach(notulen => {
-        const statusText = notulen.status === 'selesai' ? 'Selesai' : 
-                          notulen.status === 'review' ? 'Review' : 'Draft';
-        const statusClass = `status-${notulen.status}`;
-        
-        const row = document.createElement('tr');
-        row.setAttribute('data-id', notulen.id);
-        row.innerHTML = `
-          <td>${notulen.judul}</td>
-          <td>${notulen.rapatNama}</td>
-          <td>${formatTanggal(notulen.tanggal)}</td>
-          <td>${notulen.pembuat}</td>
-          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn-action btn-view" data-id="${notulen.id}"><i class="fas fa-eye"></i> Lihat</button>
-              <button class="btn-action btn-edit" data-id="${notulen.id}"><i class="fas fa-edit"></i> Edit</button>
-              <button class="btn-action btn-download" data-id="${notulen.id}"><i class="fas fa-download"></i> Unduh</button>
-              <button class="btn-action btn-delete" data-id="${notulen.id}"><i class="fas fa-trash"></i> Hapus</button>
-            </div>
-          </td>
-        `;
-        tableBody.appendChild(row);
-      });
-      
-      // Tambahkan event listener untuk tombol aksi
-      attachEventListeners();
-    }
-
     // Attach event listeners untuk tombol aksi
-    function attachEventListeners() {
+    document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.btn-view').forEach(button => {
         button.addEventListener('click', function() {
-          const id = parseInt(this.getAttribute('data-id'));
+          const id = this.getAttribute('data-id');
           bukaModalView(id);
         });
       });
 
       document.querySelectorAll('.btn-edit').forEach(button => {
         button.addEventListener('click', function() {
-          const id = parseInt(this.getAttribute('data-id'));
+          const id = this.getAttribute('data-id');
           bukaModalEdit(id);
         });
       });
 
       document.querySelectorAll('.btn-download').forEach(button => {
         button.addEventListener('click', function() {
-          const id = parseInt(this.getAttribute('data-id'));
-          const notulen = dataNotulen.find(item => item.id === id);
-          if (notulen) {
-            alert(`Mengunduh notulen: ${notulen.judul}`);
-            // Di sini bisa implementasi download PDF
-          }
+          const id = this.getAttribute('data-id');
+          const row = document.querySelector(`tr[data-id="${id}"]`);
+          const title = row.querySelector('td:first-child').textContent;
+          alert(`Mengunduh notulen: ${title}`);
         });
       });
 
       document.querySelectorAll('.btn-delete').forEach(button => {
         button.addEventListener('click', function() {
-          const id = parseInt(this.getAttribute('data-id'));
-          const notulen = dataNotulen.find(item => item.id === id);
-          if (notulen && confirm(`Apakah Anda yakin ingin menghapus notulen: ${notulen.judul}?`)) {
-            dataNotulen = dataNotulen.filter(item => item.id !== id);
-            updateTampilanTabel();
-            alert(`Notulen "${notulen.judul}" berhasil dihapus!`);
+          const id = this.getAttribute('data-id');
+          const row = document.querySelector(`tr[data-id="${id}"]`);
+          const title = row.querySelector('td:first-child').textContent;
+          
+          if (confirm(`Apakah Anda yakin ingin menghapus notulen: ${title}?`)) {
+            // Redirect ke proses hapus
+            window.location.href = `proses_hapus_notulen.php?id=${id}`;
           }
         });
       });
-    }
-
-    // Handle form submit (tambah dan edit)
-    formNotulen.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const rapatSelect = document.getElementById('rapat');
-      const selectedRapat = rapatSelect.options[rapatSelect.selectedIndex];
-      
-      const formData = {
-        judul: document.getElementById('judulNotulen').value,
-        rapatId: document.getElementById('rapat').value,
-        rapatNama: selectedRapat.text,
-        tanggal: new Date().toISOString().split('T')[0], // Tanggal hari ini
-        pembuat: document.getElementById('pembuatNotulen').value,
-        status: document.getElementById('statusNotulen').value,
-        agenda: document.getElementById('agendaRapat').value,
-        pembahasan: document.getElementById('pembahasan').value,
-        keputusan: document.getElementById('keputusan').value,
-        tindakLanjut: document.getElementById('tindakLanjut').value,
-        catatan: document.getElementById('catatanTambahan').value
-      };
-
-      if (editMode) {
-        // Edit mode
-        const id = parseInt(notulenIdInput.value);
-        const index = dataNotulen.findIndex(item => item.id === id);
-        if (index !== -1) {
-          dataNotulen[index] = { ...dataNotulen[index], ...formData };
-          alert(`Notulen "${formData.judul}" berhasil diperbarui!`);
-        }
-      } else {
-        // Tambah mode
-        const newId = dataNotulen.length > 0 ? Math.max(...dataNotulen.map(item => item.id)) + 1 : 1;
-        dataNotulen.push({
-          id: newId,
-          ...formData
-        });
-        alert(`Notulen "${formData.judul}" berhasil ditambahkan!`);
-      }
-
-      updateTampilanTabel();
-      tutupModal();
     });
 
     // Fungsi untuk menangani pencarian
@@ -1016,25 +861,9 @@
       });
     });
 
-    // Fungsi untuk filter berdasarkan status
-    document.getElementById('filterStatus').addEventListener('change', function(e) {
-      const status = e.target.value;
-      const rows = document.querySelectorAll('.notulen-table tbody tr');
-      
-      rows.forEach(row => {
-        const statusCell = row.querySelector('.status-badge');
-        if (status === 'all' || statusCell.classList.contains(`status-${status}`)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    });
-
     // Export functionality
     document.getElementById('btnExport').addEventListener('click', function() {
       alert('Fitur export data notulen akan dijalankan');
-      // Di sini bisa implementasi export ke Excel/CSV
     });
 
     // Print functionality
@@ -1045,11 +874,7 @@
     // Download PDF dari view modal
     document.getElementById('btnDownloadView').addEventListener('click', function() {
       alert('Mengunduh notulen dalam format PDF');
-      // Di sini bisa implementasi generate dan download PDF
     });
-
-    // Inisialisasi tampilan tabel
-    updateTampilanTabel();
   </script>
 </body>
 </html>

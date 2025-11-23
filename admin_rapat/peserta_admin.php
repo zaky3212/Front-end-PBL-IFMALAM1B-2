@@ -15,80 +15,10 @@ function getParticipants($koneksi) {
     return $participants;
 }
 
-// Fungsi untuk menambahkan peserta ke database
-function addParticipant($koneksi, $data) {
-    $name = mysqli_real_escape_string($koneksi, $data['name']);
-    $email = mysqli_real_escape_string($koneksi, $data['email']);
-    $department = mysqli_real_escape_string($koneksi, $data['department']);
-    $position = mysqli_real_escape_string($koneksi, $data['position']);
-    $phone = mysqli_real_escape_string($koneksi, $data['phone']);
-    $created_at = date('Y-m-d H:i:s');
-
-    $sql = "INSERT INTO participant (name, email, department, position, phone, created_at) 
-            VALUES ('$name', '$email', '$department', '$position', '$phone', '$created_at')";
-    
-    return mysqli_query($koneksi, $sql);
-}
-
-// Fungsi untuk mengupdate peserta di database
-function updateParticipant($koneksi, $id, $data) {
-    $name = mysqli_real_escape_string($koneksi, $data['name']);
-    $email = mysqli_real_escape_string($koneksi, $data['email']);
-    $department = mysqli_real_escape_string($koneksi, $data['department']);
-    $position = mysqli_real_escape_string($koneksi, $data['position']);
-    $phone = mysqli_real_escape_string($koneksi, $data['phone']);
-    $created_at = date('Y-m-d H:i:s');
-
-    $sql = "UPDATE participant SET 
-            name = '$name',
-            email = '$email',
-            department = '$department',
-            position = '$position',
-            phone = '$phone',
-            created_at = '$created_at'
-            WHERE id = $id";
-    
-    return mysqli_query($koneksi, $sql);
-}
-
 // Fungsi untuk menghapus peserta dari database
 function deleteParticipant($koneksi, $id) {
     $sql = "DELETE FROM participant WHERE id = $id";
     return mysqli_query($koneksi, $sql);
-}
-
-// Proses form tambah/edit peserta
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
-        $action = $_POST['action'];
-        
-        $data = [
-            'name' => $_POST['name'],
-            'email' => $_POST['email'],
-            'department' => $_POST['department'],
-            'position' => $_POST['position'],
-            'phone' => $_POST['phone']
-        ];
-        
-        if ($action === 'tambah') {
-            if (addParticipant($koneksi, $data)) {
-                header("Location: " . $_SERVER['PHP_SELF'] . "?success=1");
-                exit();
-            } else {
-                header("Location: " . $_SERVER['PHP_SELF'] . "?error=1");
-                exit();
-            }
-        } elseif ($action === 'edit' && isset($_POST['id'])) {
-            $id = intval($_POST['id']);
-            if (updateParticipant($koneksi, $id, $data)) {
-                header("Location: " . $_SERVER['PHP_SELF'] . "?success=2");
-                exit();
-            } else {
-                header("Location: " . $_SERVER['PHP_SELF'] . "?error=2");
-                exit();
-            }
-        }
-    }
 }
 
 // Proses hapus peserta
@@ -550,80 +480,6 @@ if (isset($_GET['error'])) {
       background-color: #333;
     }
 
-    /* Calendar Section */
-    .calendar-section {
-      background-color: #f9f9f9;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 25px;
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .calendar-header h3 {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    .calendar-nav {
-      display: flex;
-      gap: 10px;
-    }
-
-    .calendar-nav button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      color: #555;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-    }
-
-    .calendar-day {
-      text-align: center;
-      font-weight: 600;
-      color: #333;
-      padding: 8px;
-      font-size: 12px;
-    }
-
-    .calendar-date {
-      text-align: center;
-      padding: 8px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .calendar-date:hover {
-      background-color: #eaf4ff;
-    }
-
-    .calendar-date.today {
-      background-color: #f4ce14;
-      color: white;
-      font-weight: 600;
-    }
-
-    .calendar-date.has-event {
-      background-color: #e6f7e6;
-      font-weight: 500;
-    }
-
-    .calendar-date.other-month {
-      color: #ccc;
-    }
-
     /* Stats Cards */
     .stats-cards {
       display: grid;
@@ -682,8 +538,6 @@ if (isset($_GET['error'])) {
       .peserta-table th, .peserta-table td { padding: 10px; }
       .form-row { flex-direction: column; }
       .stats-cards { grid-template-columns: 1fr; }
-      .calendar-grid { gap: 2px; }
-      .calendar-date { padding: 5px; font-size: 12px; }
     }
   </style>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -722,42 +576,6 @@ if (isset($_GET['error'])) {
       <div class="alert alert-error"><?php echo $error_msg; ?></div>
     <?php endif; ?>
 
-    <!-- Stats Cards -->
-    <div class="stats-cards">
-      <div class="stat-card">
-        <div class="stat-number" id="totalPeserta"><?php echo $totalPeserta; ?></div>
-        <div class="stat-label">Total Peserta</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="totalRapat">0</div>
-        <div class="stat-label">Total Rapat</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number" id="kehadiranRata">0%</div>
-        <div class="stat-label">Rata-rata Kehadiran</div>
-      </div>
-    </div>
-
-    <!-- Calendar Section -->
-    <div class="calendar-section">
-      <div class="calendar-header">
-        <h3 id="calendarMonth">Desember 2023</h3>
-        <div class="calendar-nav">
-          <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-          <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
-        </div>
-      </div>
-      <div class="calendar-grid">
-        <div class="calendar-day">Sen</div>
-        <div class="calendar-day">Sel</div>
-        <div class="calendar-day">Rab</div>
-        <div class="calendar-day">Kam</div>
-        <div class="calendar-day">Jum</div>
-        <div class="calendar-day">Sab</div>
-        <div class="calendar-day">Min</div>
-        <!-- Calendar dates will be populated by JavaScript -->
-      </div>
-    </div>
 
     <!-- Peserta Content -->
     <div class="peserta-container">
@@ -847,7 +665,7 @@ if (isset($_GET['error'])) {
         <h2 id="modalTitle">Tambah Peserta Baru</h2>
         <button class="close-modal">&times;</button>
       </div>
-      <form id="formPeserta" method="POST" action="">
+      <form id="formPeserta" method="POST" action="proses_tambah_peserta.php">
         <input type="hidden" id="action" name="action" value="tambah">
         <input type="hidden" id="participantId" name="id" value="">
         <div class="modal-body">
@@ -865,15 +683,7 @@ if (isset($_GET['error'])) {
           <div class="form-row">
             <div class="form-group">
               <label for="department">Departemen *</label>
-              <select id="department" name="department" class="form-control" required>
-                <option value="">Pilih Departemen</option>
-                <option value="it">IT</option>
-                <option value="hrd">HRD</option>
-                <option value="marketing">Marketing</option>
-                <option value="keuangan">Keuangan</option>
-                <option value="operasional">Operasional</option>
-                <option value="lainnya">Lainnya</option>
-              </select>
+              <input type="text" id="department" name="department" class="form-control" placeholder="Masukkan departemen" required>
             </div>
             <div class="form-group">
               <label for="position">Jabatan *</label>
@@ -907,14 +717,6 @@ if (isset($_GET['error'])) {
     const actionInput = document.getElementById('action');
     const participantIdInput = document.getElementById('participantId');
     const btnSubmit = document.getElementById('btnSubmit');
-
-    // Calendar elements
-    const calendarMonth = document.getElementById('calendarMonth');
-    const prevMonthBtn = document.getElementById('prevMonth');
-    const nextMonthBtn = document.getElementById('nextMonth');
-    const calendarGrid = document.querySelector('.calendar-grid');
-
-    let currentDate = new Date();
 
     // Fungsi untuk membuka modal tambah
     btnTambahPeserta.addEventListener('click', function() {
@@ -971,70 +773,6 @@ if (isset($_GET['error'])) {
       }
     });
 
-    // Calendar functions
-    function renderCalendar() {
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      
-      // Update calendar header
-      const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                         "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-      calendarMonth.textContent = `${monthNames[month]} ${year}`;
-      
-      // Clear existing dates (keep day headers)
-      const existingDates = document.querySelectorAll('.calendar-date');
-      existingDates.forEach(date => date.remove());
-      
-      // Get first day of month and number of days
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const daysInMonth = lastDay.getDate();
-      
-      // Get day of week for first day (0 = Sunday, 1 = Monday, etc.)
-      let firstDayOfWeek = firstDay.getDay();
-      // Convert to Monday-based week (0 = Monday, 6 = Sunday)
-      firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
-      
-      // Add empty cells for days before the first day of month
-      for (let i = 0; i < firstDayOfWeek; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'calendar-date other-month';
-        emptyCell.textContent = '';
-        calendarGrid.appendChild(emptyCell);
-      }
-      
-      // Add cells for each day of the month
-      const today = new Date();
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dateCell = document.createElement('div');
-        dateCell.className = 'calendar-date';
-        dateCell.textContent = day;
-        
-        // Check if today
-        if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
-          dateCell.classList.add('today');
-        }
-        
-        // Check if has event (random for demo)
-        if (Math.random() > 0.7) {
-          dateCell.classList.add('has-event');
-        }
-        
-        calendarGrid.appendChild(dateCell);
-      }
-    }
-
-    // Calendar navigation
-    prevMonthBtn.addEventListener('click', function() {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar();
-    });
-
-    nextMonthBtn.addEventListener('click', function() {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar();
-    });
-
     // Fungsi untuk menangani pencarian
     document.getElementById('searchInput').addEventListener('input', function(e) {
       const searchTerm = e.target.value.toLowerCase();
@@ -1075,9 +813,6 @@ if (isset($_GET['error'])) {
     document.getElementById('btnPrint').addEventListener('click', function() {
       window.print();
     });
-
-    // Inisialisasi
-    renderCalendar();
   </script>
 </body>
 </html>
