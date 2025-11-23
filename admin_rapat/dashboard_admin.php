@@ -1,237 +1,238 @@
-<?php include '../koneksi.php'; ?>
+  <?php include '../koneksi.php'; ?>
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pengelolaan Rapat - Admin</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+  <!DOCTYPE html>
+  <html lang="id">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengelolaan Rapat - Admin</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+      }
 
-    body {
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
+      body {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
 
-    /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background-color: #f2e9dc;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      padding: 40px 25px;
-    }
+      /* Sidebar */
+      .sidebar {
+        width: 260px;
+        background-color: #f2e9dc;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 40px 25px;
+      }
 
-    .sidebar h2 {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 50px;
-      position: relative;
-    }
+      .sidebar h2 {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 50px;
+        position: relative;
+      }
 
-    .sidebar h2::before {
-      content: "";
-      width: 5px;
-      height: 25px;
-      background-color: #f4ce14;
-      position: absolute;
-      left: -15px;
-      top: 0;
-      border-radius: 3px;
-    }
+      .sidebar h2::before {
+        content: "";
+        width: 5px;
+        height: 25px;
+        background-color: #f4ce14;
+        position: absolute;
+        left: -15px;
+        top: 0;
+        border-radius: 3px;
+      }
 
-    .sidebar .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+      .sidebar .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
 
-    .menu a {
-      text-decoration: none;
-      color: #222;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
+      .menu a {
+        text-decoration: none;
+        color: #222;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 15px;
+        border-radius: 10px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
 
-    .menu a:hover,
-    .menu a.active {
-      background-color: #00f7ff;
-      color: #000;
-      font-weight: 600;
-    }
+      .menu a:hover,
+      .menu a.active {
+        background-color: #00f7ff;
+        color: #000;
+        font-weight: 600;
+      }
 
-    .menu i {
-      width: 20px;
-      text-align: center;
-    }
+      .menu i {
+        width: 20px;
+        text-align: center;
+      }
 
-    /* Main Content */
-    .main {
-      flex: 1;
-      background-color: #fff;
-      padding: 25px 40px;
-      overflow-y: auto;
-    }
+      /* Main Content */
+      .main {
+        flex: 1;
+        background-color: #fff;
+        padding: 25px 40px;
+        overflow-y: auto;
+      }
 
-    /* Topbar */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-    }
+      /* Topbar */
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
 
-    .topbar h1 {
-      font-size: 32px;
-      font-weight: 700;
-    }
+      .topbar h1 {
+        font-size: 32px;
+        font-weight: 700;
+      }
 
-    .topbar .right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+      .topbar .right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
 
-    .search-box {
-      position: relative;
-    }
+      .search-box {
+        position: relative;
+      }
 
-    .search-box input {
-      padding: 8px 35px 8px 15px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      outline: none;
-      background-color: #f9f9f9;
-      font-size: 14px;
-    }
+      .search-box input {
+        padding: 8px 35px 8px 15px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        outline: none;
+        background-color: #f9f9f9;
+        font-size: 14px;
+      }
 
-    .search-box i {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #999;
-    }
+      .search-box i {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #999;
+      }
 
-    .bell {
-      font-size: 18px;
-      color: #555;
-      cursor: pointer;
-    }
+      .bell {
+        font-size: 18px;
+        color: #555;
+        cursor: pointer;
+      }
 
-    /* Card Grid */
-    .card-container {
-      display: flex;
-      gap: 25px;
-      flex-wrap: wrap;
-    }
+      /* Card Grid */
+      .card-container {
+        display: flex;
+        gap: 25px;
+        flex-wrap: wrap;
+      }
 
-    .card {
-      flex: 1;
-      min-width: 200px;
-      max-width: 230px;
-      height: 120px;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: flex-start;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+      .card {
+        flex: 1;
+        min-width: 200px;
+        max-width: 230px;
+        height: 120px;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
 
-    .card:hover {
-      transform: translateY(-4px);
-    }
+      .card:hover {
+        transform: translateY(-4px);
+      }
 
-    .card i {
-      font-size: 32px;
-      margin-bottom: 10px;
-    }
+      .card i {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
 
-    .card p {
-      font-weight: 600;
-      font-size: 18px;
-    }
+      .card p {
+        font-weight: 600;
+        font-size: 18px;
+      }
 
-    .card.blue { background-color: #eaf4ff; }
-    .card.pink { background-color: #fff2f7; }
-    .card.yellow { background-color: #fff8e5; }
-    .card.orange {
-      background: linear-gradient(to right, #fcb045, #fd1d1d);
-      color: #fff;
-    }
+      .card.blue { background-color: #eaf4ff; }
+      .card.pink { background-color: #fff2f7; }
+      .card.yellow { background-color: #fff8e5; }
+      .card.orange {
+        background: linear-gradient(to right, #fcb045, #fd1d1d);
+        color: #fff;
+      }
 
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .main { padding: 20px; }
-      .card-container { justify-content: center; }
-    }
-  </style>
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
-<body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h2>Pengelolaan Rapat</h2>
-    <div class="menu">
-      <a href="dashboard_admin.php" class="active"><i class="fas fa-home"></i> Home</a>
-      <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
-      <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
-      <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
-   
+      @media (max-width: 768px) {
+        .sidebar { display: none; }
+        .main { padding: 20px; }
+        .card-container { justify-content: center; }
+      }
+    </style>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h2>Pengelolaan Rapat</h2>
+      <div class="menu">
+        <a href="dashboard_admin.php" class="active"><i class="fas fa-home"></i> Home</a>
+        <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+        <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
+        <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
+        <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
+    
+      </div>
     </div>
-  </div>
 
-  <!-- Main Content -->
-  <div class="main">
-    <div class="topbar">
-      <h1>Admin</h1>
-      <div class="right">
-        <div class="search-box">
-          <input type="text" placeholder="Search...">
-          <i class="fas fa-search"></i>
+    <!-- Main Content -->
+    <div class="main">
+      <div class="topbar">
+        <h1>Admin</h1>
+        <div class="right">
+          <div class="search-box">
+            <input type="text" placeholder="Search...">
+            <i class="fas fa-search"></i>
+          </div>
+          <i class="fas fa-bell bell"></i>
         </div>
-        <i class="fas fa-bell bell"></i>
       </div>
-    </div>
 
-    <!-- Cards -->
-    <div class="card-container">
-      <div class="card blue">
-        <i class="fas fa-user"></i>
-        <p>Peserta</p>
-      </div>
-      <div class="card pink">
-        <i class="fas fa-calendar"></i>
-        <p>Jadwal</p>
-      </div>
-      <div class="card yellow">
-        <i class="fas fa-file-alt"></i>
-        <p>Notulen</p>
-      </div>
-      <div class="card orange">
-        <i class="fas fa-user-shield"></i>
-        <p>Admin</p>
+      <!-- Cards -->
+      <div class="card-container">
+        <div class="card blue">
+          <i class="fas fa-user"></i>
+          <p>Peserta</p>
+        </div>
+        <div class="card pink">
+          <i class="fas fa-calendar"></i>
+          <p>Jadwal</p>
+        </div>
+        <div class="card yellow">
+          <i class="fas fa-file-alt"></i>
+          <p>Notulen</p>
+        </div>
+        <div class="card orange">
+          <i class="fas fa-user-shield"></i>
+          <p>Admin</p>
+        </div>
       </div>
     </div>
-  </div>
-</body>
-</html>
+  </body>
+  </html>
