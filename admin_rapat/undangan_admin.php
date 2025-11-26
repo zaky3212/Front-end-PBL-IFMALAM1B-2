@@ -143,7 +143,7 @@
   <h2>Pengelolaan Rapat</h2>
 
   <div class="menu">
-    <a href="dashboard_admin.php"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="dashboard_admin.php"><i class="fas fa-home"></i> Home</a>
     <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
     <a href="peserta_admin.php"><i class="fas fa-users"></i> Peserta</a>
     <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>

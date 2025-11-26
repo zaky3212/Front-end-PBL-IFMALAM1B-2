@@ -118,10 +118,10 @@
   <div class="sidebar">
     <h5>Pengelolaan Rapat</h5>
     <h4 class="fw-bold mb-4">Peserta</h4>
-    <a href="biodata.html"><i class="bi bi-house-door"></i>Home</a>
-    <a href="undangan.html"><i class="bi bi-bookmark"></i>Undangan</a>
-    <a href="jadwal.html"><i class="bi bi-calendar"></i>Jadwal</a>
-    <a href="notulensi.html" class="active"><i class="bi bi-file-earmark-text"></i>Notulensi</a>
+    <a href="biodata.php"><i class="bi bi-house-door"></i>Home</a>
+    <a href="undangan.php"><i class="bi bi-bookmark"></i>Undangan</a>
+    <a href="jadwal.php"><i class="bi bi-calendar"></i>Jadwal</a>
+    <a href="notulensi.php" class="active"><i class="bi bi-file-earmark-text"></i>Notulensi</a>
   </div>
 
   <!-- Main Content -->
@@ -130,7 +130,7 @@
       <div class="search-bar">
         <input type="text" placeholder="Search...">
       </div>
-      <a href="#" class="logout">Logout <i class="bi bi-box-arrow-right"></i></a>
+      <a href="../logout.php" class="logout">Logout <i class="bi bi-box-arrow-right"></i></a>
     </div>
 
     <div class="content-section">

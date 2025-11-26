@@ -12,7 +12,7 @@
 <body>
   <div class="container">
     <div class="login-box">
-      <h1><span class="highlight"></span>Login Admin</h1>
+      <h1><span class="highlight"></span>Login</h1>
       <h2>LOGIN</h2>
       <p class="subtitle">Enter your credentials to access your account</p>
       

@@ -46,7 +46,7 @@ if (mysqli_num_rows($query) > 0) {
             header('Location: admin_rapat/dashboard_admin.php');
             exit;
         } elseif ($data['role'] === 'user') {
-            header('Location: peserta_rapat/biodata.html');
+            header('Location: peserta_rapat/biodata.php');
             exit;
         } else {
             // role tidak dikenali
