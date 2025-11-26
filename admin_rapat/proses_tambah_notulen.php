@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                   created_at = NOW()
                   WHERE id = '$id'";
     } else {
-        $query = "INSERT INTO participant (title, agenda, decisions, follow_up, notes, created_by, created_at) 
+        $query = "INSERT INTO minutes (title, agenda, decisions, follow_up, notes, created_by, created_at) 
                   VALUES ('$title', '$agenda', '$decisions', '$follow_up', '$notes', '$created_by', NOW())";
     }
     
