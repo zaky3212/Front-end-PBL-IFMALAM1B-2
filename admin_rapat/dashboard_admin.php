@@ -1,4 +1,5 @@
 <?php 
+session_start();
 include '../koneksi.php';
 
 // Query untuk mengambil total peserta dari tabel participant
@@ -46,6 +47,7 @@ $meetingsJson = json_encode($meetingsData);
         <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
         <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
         <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
+       
     
       </div>
     </div>

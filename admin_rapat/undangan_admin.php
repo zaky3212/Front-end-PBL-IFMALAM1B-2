@@ -1,4 +1,6 @@
-<?php include '../koneksi.php'; ?>
+<?php
+session_start(); 
+include '../koneksi.php'; ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -60,6 +62,7 @@ body { display: flex; height: 100vh; overflow: hidden; }
     <a href="peserta_admin.php"><i class="fas fa-users"></i> Peserta</a>
     <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
     <a href="undangan_admin.php" class="active"><i class="fas fa-envelope"></i> Undangan</a>
+    <a href="peserta_tambah.php" class="active"><i class="fas fa-envelope"></i> User</a>
   </div>
 </div>
 
