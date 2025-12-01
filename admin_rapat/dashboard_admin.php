@@ -1,5 +1,4 @@
 <?php 
-session_start();
 include '../koneksi.php';
 
 // Query untuk mengambil total peserta dari tabel participant
@@ -27,30 +26,370 @@ while ($row = mysqli_fetch_assoc($resultMeetings)) {
 $meetingsJson = json_encode($meetingsData);
 ?>
 
-  <!DOCTYPE html>
-  <html lang="id">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/style_dashboard_admin.css">
-    <title>Pengelolaan Rapat - Admin</title>
-   
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h2>Pengelolaan Rapat</h2>
-      <div class="menu">
-        <a href="dashboard_admin.php" class="active"><i class="fas fa-home"></i> Home</a>
-        <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
-        <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
-        <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
-        <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
-       
-    
-      </div>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengelolaan Rapat - Admin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: #f2e9dc;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 40px 25px;
+    }
+
+    .sidebar h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 50px;
+      position: relative;
+    }
+
+    .sidebar h2::before {
+      content: "";
+      width: 5px;
+      height: 25px;
+      background-color: #f4ce14;
+      position: absolute;
+      left: -15px;
+      top: 0;
+      border-radius: 3px;
+    }
+
+    .sidebar .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .menu a {
+      text-decoration: none;
+      color: #222;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .menu a:hover,
+    .menu a.active {
+      background-color: #00f7ff;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .menu i {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      background-color: #fff;
+      padding: 25px 40px;
+      overflow-y: auto;
+    }
+
+    /* Topbar */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .topbar h1 {
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .topbar .right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      padding: 8px 35px 8px 15px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      background-color: #f9f9f9;
+      font-size: 14px;
+    }
+
+    .search-box i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .bell {
+      font-size: 18px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    /* Calendar Section */
+    .calendar-section {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-header h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    .calendar-nav button {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .calendar-nav button:hover {
+      background-color: #00f7ff;
+      border-color: #00f7ff;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .calendar-day {
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 0;
+      color: #555;
+      background-color: #f0f0f0;
+      border-radius: 8px;
+    }
+
+    .calendar-date {
+      text-align: center;
+      padding: 15px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      background-color: #fff;
+      border: 1px solid #f0f0f0;
+      position: relative;
+      min-height: 60px;
+    }
+
+    .calendar-date:hover {
+      background-color: #e6f7ff;
+      transform: scale(1.05);
+    }
+
+    .calendar-date.today {
+      background-color: #00f7ff;
+      color: #000;
+      font-weight: 600;
+      border-color: #00f7ff;
+    }
+
+    .calendar-date.has-meeting {
+      background-color: #fff8e5;
+      color: #d35400;
+      font-weight: 500;
+      border: 2px solid #f4ce14;
+    }
+
+    .calendar-date.other-month {
+      color: #ccc;
+      background-color: #f9f9f9;
+    }
+
+    .meeting-dot {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background-color: #d35400;
+      border-radius: 50%;
+    }
+
+    .meeting-info {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Meeting Tooltip */
+    .meeting-tooltip {
+      display: none;
+      position: absolute;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      min-width: 300px;
+      max-width: 400px;
+    }
+
+    .meeting-tooltip h4 {
+      margin-bottom: 8px;
+      color: #2c3e50;
+    }
+
+    .meeting-tooltip p {
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .meeting-tooltip .time {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+
+    .meeting-tooltip .location {
+      color: #3498db;
+    }
+
+    .meeting-tooltip .leader {
+      color: #27ae60;
+    }
+
+    /* Stats Cards */
+    .stats-cards {
+      display: flex;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 250px;
+      background: linear-gradient(135deg, #8d8d8dff 0%, #8d8d8dff  100%);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      color: white;
+    }
+
+    .stat-number {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    .stats-cards .stat-card:nth-child(2) {
+      background: linear-gradient(135deg, #8d8d8dff 0%, #8d8d8dff 100%);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .main { padding: 20px; }
+      .stats-cards { 
+        justify-content: center;
+        flex-direction: column;
+      }
+      .stat-card {
+        min-width: 100%;
+      }
+      .calendar-grid {
+        gap: 4px;
+      }
+      .calendar-date {
+        padding: 10px 0;
+        font-size: 12px;
+        min-height: 50px;
+      }
+    }
+  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Pengelolaan Rapat</h2>
+    <div class="menu">
+      <a href="dashboard_admin.php" class="active"><i class="fas fa-home"></i> Home</a>
+      <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
+      <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
+      <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
+      <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
     </div>
+  </div>
 
   <!-- Main Content -->
   <div class="main">
