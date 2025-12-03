@@ -1,65 +1,36 @@
 <?php
 session_start();
-// Pastikan request POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: login.php');
-    exit;
-}
+include "koneksi.php";
 
-include 'koneksi.php';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-$username = isset($_POST['username']) ? trim($_POST['username']) : '';
-$password = isset($_POST['password']) ? $_POST['password'] : '';
+    $email = mysqli_real_escape_string($koneksi, $_POST['email']);
+    $password = $_POST['password'];
 
-// Sanitasi sederhana untuk query
-$username_esc = mysqli_real_escape_string($koneksi, $username);
+    // Query user berdasarkan EMAIL
+    $sql = mysqli_query($koneksi, "SELECT * FROM users WHERE email='$email'");
+    $data = mysqli_fetch_assoc($sql);
 
-// Ambil user berdasarkan username saja, lalu cocokkan password di PHP
-$sql = "SELECT * FROM users WHERE `username` = '$username_esc' LIMIT 1";
-$query = mysqli_query($koneksi, $sql);
+    // Validasi password hash
+    if ($data && password_verify($password, $data['password'])) {
 
-if (!$query) {
-    // Tampilkan error untuk debugging (hapus/disable di production)
-    die('Query error: ' . mysqli_error($koneksi));
-}
+        // SET SESSION yang benar
+        $_SESSION['user_id'] = $data['participant_id'];
+        $_SESSION["username"] = $data['username'];
+        $_SESSION["email"] = $data['email'];
+        $_SESSION["role"] = $data['role'];
+        $_SESSION["login"] = true;
 
-if (mysqli_num_rows($query) > 0) {
-    $data = mysqli_fetch_assoc($query);
-
-    $stored = isset($data['password']) ? $data['password'] : '';
-
-    $password_ok = false;
-    // Jika password disimpan menggunakan password_hash
-    if (password_verify($password, $stored)) {
-        $password_ok = true;
-    } elseif ($password === $stored) {
-        // fallback jika password disimpan plaintext (tidak direkomendasikan)
-        $password_ok = true;
-    }
-
-    if ($password_ok) {
-        session_start();
-        $_SESSION['id'] = $data['id'];
-        $_SESSION['role'] = $data['role'];
-
-        if ($data['role'] === 'admin') {
-            header('Location: admin_rapat/dashboard_admin.php');
-            exit;
-        } elseif ($data['role'] === 'user') {
-            header('Location: peserta_rapat/biodata.php');
-            exit;
+        // Redirect sesuai role
+        if ($data['role'] == 'admin') {
+            header("Location: admin_rapat/dashboard_admin.php");
         } else {
-            // role tidak dikenali
-            echo "<script>alert('Role tidak dikenali.'); window.location.replace('login.php');</script>";
-            exit;
+            header("Location: peserta_rapat/biodata.php");
         }
-    } else {
-        echo "<script>alert('Maaf, username atau password salah.'); window.location.replace('login.php');</script>";
-        exit;
+        exit();
+    } 
+    else {
+        echo "<script>alert('Email atau Password salah!');window.location='login.php';</script>";
     }
-
-} else {
-    echo "<script>alert('Maaf, username tidak ditemukan.'); window.location.replace('login.php');</script>";
-    exit;
 }
 ?>

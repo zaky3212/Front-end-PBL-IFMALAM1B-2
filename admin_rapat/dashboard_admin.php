@@ -1,4 +1,14 @@
 <?php 
+session_start();
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
+    header("Location: ../login.php");
+    exit();
+}
+
+
+$admin_id = $_SESSION['user_id'];
+$admin_name = $_SESSION['username'];
+
 include '../koneksi.php';
 
 // Query untuk mengambil total peserta dari tabel participant
@@ -382,6 +392,7 @@ $meetingsJson = json_encode($meetingsData);
   <!-- Sidebar -->
   <div class="sidebar">
     <h2>Pengelolaan Rapat</h2>
+    <h3>Selamat datang, <?= $admin_name ?>!</h3>
     <div class="menu">
       <a href="dashboard_admin.php" class="active"><i class="fas fa-home"></i> Home</a>
       <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>

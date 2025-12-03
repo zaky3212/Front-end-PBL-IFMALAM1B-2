@@ -1,4 +1,6 @@
-<?php include '../koneksi.php'; ?>
+<?php 
+session_start();
+include '../koneksi.php'; ?>
 
 <!DOCTYPE html>
 <html lang="id">

@@ -81,6 +81,7 @@ if (isset($_GET['error'])) {
       <a href="peserta_admin.php" class="active"><i class="fas fa-user-graduate"></i> Peserta</a>
       <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
       <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
+      <a href="tambah_akun.php"><i class="fas fa-file-alt"></i> Tambah Akun</a>
    
     </div>
   </div>
@@ -171,10 +172,7 @@ if (isset($_GET['error'])) {
                             data-phone="<?php echo htmlspecialchars($participant['phone']); ?>">
                       <i class="fas fa-edit"></i> Edit
                     </button>
-                    <a href="?hapus=<?php echo $participant['id']; ?>" class="btn-action btn-delete" 
-                       onclick="return confirm('Apakah Anda yakin ingin menghapus peserta ini?')">
-                      <i class="fas fa-trash"></i> Hapus
-                    </a>
+                    <a href="proses_hapus_peserta.php?id=<?php echo $participant['id']; ?>" class="btn-action btn-delete">
                   </div>
                 </td>
               </tr>
@@ -251,7 +249,8 @@ if (isset($_GET['error'])) {
 
     // Fungsi untuk membuka modal tambah
     btnTambahPeserta.addEventListener('click', function() {
-      actionInput.value = "tambah";
+  actionInput.value = "tambah";
+  formPeserta.action = "proses_tambah_peserta.php";
       modalTitle.textContent = "Tambah Peserta Baru";
       btnSubmit.textContent = "Simpan Peserta";
       formPeserta.reset();
@@ -272,6 +271,7 @@ if (isset($_GET['error'])) {
         };
 
         actionInput.value = "edit";
+        formPeserta.action = "proses_edit_peserta.php";
         modalTitle.textContent = "Edit Peserta";
         btnSubmit.textContent = "Update Peserta";
         
@@ -345,5 +345,8 @@ if (isset($_GET['error'])) {
       window.print();
     });
   </script>
+
+
+
 </body>
 </html>

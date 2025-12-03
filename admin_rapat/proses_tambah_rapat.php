@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // Ambil data POST dengan sanitasi dasar
 $id = isset($_POST['id']) ? trim($_POST['id']) : '';
