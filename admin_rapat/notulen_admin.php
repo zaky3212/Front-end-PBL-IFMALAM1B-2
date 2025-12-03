@@ -22,6 +22,7 @@
         <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
         <a href="notulen_admin.php" class="active"><i class="fas fa-file-alt"></i> Notulen</a>
         <a href="undangan_admin.php" ><i class="fas fa-file-alt"></i> Undangan</a>
+        <a href="tambah_akun.php" ><i class="fas fa-file-alt"></i> Tambah Akun</a>
       
       </div>
     </div>
