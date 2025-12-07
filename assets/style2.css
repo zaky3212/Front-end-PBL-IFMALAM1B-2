@@ -1,110 +1,134 @@
-/* Background gradasi */
+/* ===== Global ===== */
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(to right, #00d4ff, #004d4d);
+  background: linear-gradient(135deg, #ffdbbb, #f1c7a0);
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  animation: fadeIn 0.8s ease-out;
 }
 
-/* Card putih di tengah */
-.login-box {
-  background-color: #fff;
-  border-radius: 15px;
-  padding: 40px 50px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  width: 350px;
-  text-align: left;
+/* ===== Card Utama ===== */
+.container {
+  width: 880px;
+  height: 520px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(15px);
+  border-radius: 22px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.2);
+  display: flex;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.5);
 }
 
-/* Judul */
-.login-box h1 {
-  font-size: 26px;
+/* ===== Left Side ===== */
+.left-side {
+  width: 45%;
+  padding: 40px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+  border-right: 1px solid rgba(255,255,255,0.3);
+  color: #3a2c1f;
+}
+
+.left-side h1 {
+  font-size: 30px;
   font-weight: 700;
-  margin-bottom: 10px;
-  position: relative;
 }
 
-/* Garis kecil kuning di samping kiri judul */
-.login-box h1::before {
-  content: "";
-  position: absolute;
-  left: -17px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 5px;
-  height: 25px;
-  background-color: #fdd835;
-  border-radius: 3px;
+.left-side p {
+  font-size: 15px;
+  opacity: 0.9;
+  margin-top: 10px;
 }
 
-/* Subjudul LOGIN / SIGN UP */
+/* ===== Login Box ===== */
+.login-box {
+  width: 55%;
+  padding: 50px;
+  background: #fffdfc;
+  color: #3a2c1f;
+}
+
 .login-box h2 {
   text-align: center;
-  margin: 10px 0 5px;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 28px;
+  margin-bottom: 8px;
+  font-weight: 700;
 }
 
-/* Keterangan di bawah LOGIN/SIGNUP */
 .subtitle {
   text-align: center;
-  color: #666;
-  font-size: 13px;
-  margin-bottom: 20px;
+  color: #7a6a5c;
+  margin-bottom: 25px;
 }
 
-/* Input form */
-label {
+/* ===== Input ===== */
+.input-group {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-group i {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  font-size: 17px;
+  color: #b37a4c;
+}
+
+.input-group input {
+  width: 86%;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #d5bda7;
+  background: #fff8f3;
+  border-radius: 10px;
   font-size: 14px;
-  margin-bottom: 5px;
-  display: block;
-  color: #333;
+  transition: 0.3s;
 }
 
-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  font-size: 14px;
+input:focus {
+  border-color: #b37a4c;
+  outline: none;
+  box-shadow: 0 0 6px rgba(179,122,76,0.4);
 }
 
-/* Tombol */
+/* ===== Button ===== */
 button {
   width: 100%;
-  background-color: #000;
+  padding: 13px;
+  background: #b37a4c;
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 6px;
+  border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
   font-weight: 600;
-  font-size: 14px;
-  transition: background 0.3s;
+  transition: 0.3s;
 }
 
 button:hover {
-  background-color: #333;
+  background: #8f603c;
+  transform: scale(1.02);
 }
 
-/* Link bawah */
-.forgot {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 13px;
-  color: #555;
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .container {
+    width: 90%;
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-side, .login-box {
+    width: 100%;
+  }
 }
 
-.forgot a {
-  color: #0099cc;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.forgot a:hover {
-  text-decoration: underline;
+/* ===== Fade-in ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
