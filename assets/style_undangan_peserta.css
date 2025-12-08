@@ -1,0 +1,156 @@
+/* ===== Global ===== */
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #fff;
+    margin: 0;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 260px;
+    background-color: #f2e9dc;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 25px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.sidebar h5 {
+    margin: 0;
+    font-size: 16px;
+    opacity: 0.7;
+}
+
+.sidebar h4 {
+    font-weight: 700;
+    margin: 10px 0 40px;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #222;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    transition: 0.3s ease;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background-color: #00f7ff;
+    font-weight: 600;
+}
+
+/* ===== Main Content ===== */
+.main-content {
+    margin-left: 260px;
+    padding: 35px 45px;
+}
+
+/* Topbar */
+.topbar h3 {
+    margin: 0;
+}
+
+.topbar .btn {
+    font-size: 13px;
+}
+
+/* ===== Card Undangan ===== */
+.undangan-card {
+    border-radius: 14px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    padding: 30px;
+}
+
+.undangan-title {
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+/* Table */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.table th {
+    font-weight: 600;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.table td {
+    vertical-align: middle;
+    background-color: #fff;
+    padding: 12px 15px;
+}
+
+.table tr:hover td {
+    background-color: #f1f1f1;
+    transition: 0.2s;
+}
+
+/* Tombol Terima/Tolak */
+.btn-sm {
+    font-size: 13px;
+    padding: 4px 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; padding: 20px; }
+}
+
+.sidebar {
+    width: 260px;
+    background-color: #f2e9dc;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* <- ini membuat logout selalu di bawah */
+    padding: 40px 25px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+/* Container untuk menu link */
+.sidebar .menu-links {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Logout Box tetap di bawah */
+.logout-box {
+    margin-top: 20px;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 15px;
+    width: 100%;
+    background-color: #ff4d4f; /* merah untuk menandakan logout */
+    color: #fff;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #ff7875;
+}

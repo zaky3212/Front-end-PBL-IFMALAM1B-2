@@ -1,0 +1,121 @@
+/* ===========================
+   GLOBAL LAYOUT PESERTA
+   =========================== */
+   .peserta-body {
+    font-family: "Poppins", sans-serif;
+    background: #f7f7f7;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+  
+  /* Container Utama */
+  .peserta-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  
+  /* Judul Halaman */
+  .peserta-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #4a3d32;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* ===========================
+     TABEL BIODATA, UNDANGAN, NOTULENSI
+     =========================== */
+  .peserta-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+  
+  .peserta-table th {
+    background: #e0d6c6;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  
+  .peserta-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .peserta-table tr:hover {
+    background: #f5f1eb;
+  }
+  
+  /* ===========================
+     KARTU / CARD MODEL
+     =========================== */
+  .peserta-card {
+    background: #fff;
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 25px;
+  }
+  
+  /* ===========================
+     SEARCH BAR & INPUT
+     =========================== */
+  .peserta-search {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cfc5b5;
+    font-size: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  /* ===========================
+     TOMBOL
+     =========================== */
+  .peserta-btn {
+    background: #8b6f47;
+    color: #fff;
+    padding: 10px 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: 0.25s;
+  }
+  
+  .peserta-btn:hover {
+    background: #6d5639;
+  }
+  
+  /* Tombol Kecil */
+  .peserta-btn-sm {
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+  
+  /* ===========================
+     RESPONSIVE
+     =========================== */
+  @media (max-width: 768px) {
+    .peserta-container {
+      padding: 20px;
+    }
+  
+    .peserta-title {
+      font-size: 22px;
+    }
+  
+    .peserta-table th,
+    .peserta-table td {
+      padding: 10px;
+      font-size: 14px;
+    }
+  }
+  

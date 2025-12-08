@@ -9,6 +9,7 @@ include '../koneksi.php';
 
 // Ambil data user + biodata peserta dari tabel participant
 $user_id = $_SESSION['user_id'];
+$peserta_name = $_SESSION['username'];
 
 $query = mysqli_query($koneksi, "
     SELECT users.username, users.email AS user_email,
@@ -31,6 +32,7 @@ if (!$peserta) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Peserta</title>
+  <link rel="stylesheet" href="../assets/style_biodata.css">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -48,19 +50,30 @@ if (!$peserta) {
 <body>
 
 <div class="sidebar">
-    <h5>Pengelolaan Rapat</h5>
-    <h4 class="fw-bold mb-4">Peserta</h4>
-    <a href="biodata.php" class="active"><i class="bi bi-house-door"></i>Home</a>
-    <a href="undangan.php"><i class="bi bi-bookmark"></i>Undangan</a>
-    <a href="jadwal.php"><i class="bi bi-calendar"></i>Jadwal</a>
-    <a href="notulensi.php"><i class="bi bi-file-earmark-text"></i>Notulensi</a>
+    <div class="menu-links">
+        <h5>Pengelolaan Rapat</h5>
+        <h4 class="fw-bold mb-4">Selamat Datang  <?= $peserta_name ?>!</h4>
+        <a href="biodata.php"><i class="bi bi-house-door"></i> Home</a>
+        <a href="undangan.php"><i class="bi bi-bookmark"></i> Undangan</a>
+        <a href="jadwal.php"><i class="bi bi-calendar"></i> Jadwal</a>
+        <a href="notulensi.php"><i class="bi bi-file-earmark-text"></i> Notulensi</a>
+    </div>
+
+    <!-- Logout Box -->
+    <div class="logout-box">
+        <a href="../logout.php" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+    </div>
 </div>
+
+
 
 <div class="main-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div></div>
-        <a href="../logout.php" class="text-dark fw-semibold">Logout <i class="bi bi-box-arrow-right"></i></a>
+        
     </div>
 
     <div class="card shadow-sm p-4">

@@ -53,6 +53,38 @@ include '../koneksi.php';
     .form-box button:hover {
         background: #14e0f4;
     }
+    .logout-box {
+    margin-top: auto;
+    padding-top: 40px;
+}
+
+.logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    background: #ffe3e3;
+    color: #b30000;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid #ffb3b3;
+    transition: 0.3s;
+}
+
+
+.logout-btn i {
+    font-size: 18px;
+}
+
+.logout-btn:hover {
+    background: #ff4d4d;
+    color: #fff;
+    border-color: #ff4d4d;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
+}
   </style>
 </head>
 <body>
@@ -66,7 +98,12 @@ include '../koneksi.php';
       <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
       <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
       <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
-      <a class="active" href="tambah_akun.php"><i class="fas fa-user-plus"></i> Buat Akun</a>
+      <a  href="tambah_akun.php"><i class="fas fa-user-plus"></i> Tambah Akun</a>
+    </div>
+    <div class="logout-box">
+    <a href="../logout.php" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
     </div>
 </div>
 
