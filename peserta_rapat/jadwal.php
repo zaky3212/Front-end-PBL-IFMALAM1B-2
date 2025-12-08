@@ -8,8 +8,15 @@ if (!isset($_SESSION['user_id'])) {
 include '../koneksi.php';
 
 $peserta_name = $_SESSION['username'];
-// Ambil data rapat
-$sql = "SELECT * FROM meetings ORDER BY dates DESC";
+
+// Ambil kata pencarian dari GET dan escape untuk keamanan
+$search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
+
+// Query data rapat dengan filter ruang
+$sql = "SELECT * FROM meetings 
+        WHERE locations LIKE '%$search%' 
+        ORDER BY dates DESC";
+
 $result = mysqli_query($koneksi, $sql);
 if (!$result) {
     die("Query error: " . mysqli_error($koneksi));
@@ -47,7 +54,7 @@ function getStatus($dates, $start_time, $end_time)
 <div class="sidebar">
     <div class="menu-links">
         <h5>Pengelolaan Rapat</h5>
-        <h4 class="fw-bold mb-4">Selamat Datang  <?= $peserta_name ?>!</h4>
+        <h4 class="fw-bold mb-4">Selamat Datang <?= htmlspecialchars($peserta_name) ?>!</h4>
         <a href="biodata.php"><i class="bi bi-house-door"></i> Home</a>
         <a href="undangan.php"><i class="bi bi-bookmark"></i> Undangan</a>
         <a href="jadwal.php"><i class="bi bi-calendar"></i> Jadwal</a>
@@ -66,10 +73,10 @@ function getStatus($dates, $start_time, $end_time)
 <div class="main-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="search-bar">
-          <input type="text" placeholder="Search...">
-        </div>
-        
+        <form method="GET" class="d-flex search-bar">
+            <input type="text" name="search" placeholder="Cari ruang..." class="form-control me-2" value="<?= htmlspecialchars($search) ?>">
+            <button type="submit" class="btn btn-primary btn-sm">Cari</button>
+        </form>
     </div>
 
     <div class="card shadow-sm p-4 jadwal-card">
