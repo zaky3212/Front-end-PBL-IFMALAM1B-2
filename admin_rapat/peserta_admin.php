@@ -73,18 +73,100 @@ if (isset($_GET['error'])) {
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <style>
 /* Tombol Edit & Hapus minimal styling */
-.btn-action {
-    padding: 5px 10px;
-    margin: 2px;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-    color: #fff;
-    text-decoration: none;
-    display: inline-block;
+/* ===============================
+   SIDEBAR FINAL
+================================ */
+
+.sidebar {
+  width: 250px;
+  background-color: #f2e9dc; /* cream utama */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 20px;
 }
-.btn-edit { background-color: #4CAF50; }
-.btn-delete { background-color: #f44336; }
+
+/* Judul sidebar */
+.sidebar h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.sidebar h2::before {
+  content: "";
+  width: 5px;
+  height: 25px;
+  background-color: #f4ce14;
+  position: absolute;
+  left: -15px;
+  top: 0;
+  border-radius: 3px;
+}
+
+/* Menu */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.menu a {
+  position: relative;
+  text-decoration: none;
+  color: #222;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* HOVER & ACTIVE */
+.menu a:hover,
+.menu a.active {
+  background-color: #e6dccb; /* cream lebih gelap */
+  color: #000;
+  font-weight: 600;
+}
+
+
+.menu i {
+  width: 20px;
+  text-align: center;
+}
+
+/* Logout di bawah */
+.logout-box {
+  margin-top: auto;
+}
+
+.logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+  background: #ffe3e3;
+  color: #b30000;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #ffb3b3;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #ff4d4d;
+  color: #fff;
+  border-color: #ff4d4d;
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
+}
+
 </style>
 </head>
 <body>

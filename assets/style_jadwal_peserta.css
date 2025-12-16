@@ -45,7 +45,8 @@ body {
 
 .sidebar a:hover,
 .sidebar a.active {
-    background-color: #00f7ff;
+    background-color: #e6dccb;
+  color: black;
     font-weight: 600;
 }
 

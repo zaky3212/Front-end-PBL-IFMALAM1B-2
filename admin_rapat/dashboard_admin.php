@@ -107,8 +107,8 @@ $meetingsJson = json_encode($meetingsData);
 
     .menu a:hover,
     .menu a.active {
-      background-color: #00f7ff;
-      color: #000;
+      background-color: #e6dccb;
+  color: black;
       font-weight: 600;
     }
 
