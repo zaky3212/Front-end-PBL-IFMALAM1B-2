@@ -2,12 +2,12 @@
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #ffdbbb, #f1c7a0);
+  background: linear-gradient(135deg, #f2e9dc);
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: fadeIn 0.8s ease-out;
+  animation: fadeIn 0.8s ease-out;  
 }
 
 /* ===== Card Utama ===== */
