@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../koneksi.php'; 
+include '../koneksi.php';
 
 $admin_name = $_SESSION['username'];
 ?>
@@ -85,7 +85,7 @@ $admin_name = $_SESSION['username'];
     .menu a:hover,
     .menu a.active {
       background-color: #e6dccb;
-  color: black;
+      color: black;
       font-weight: 600;
     }
 
@@ -108,38 +108,103 @@ $admin_name = $_SESSION['username'];
       align-items: center;
       margin-bottom: 30px;
     }
+
     .logout-box {
-  margin-top: auto;
-  padding-top: 40px;
+      margin-top: auto;
+      padding-top: 40px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border-radius: 10px;
+      background: #ffe3e3;
+      color: #b30000;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid #ffb3b3;
+      transition: 0.3s;
+    }
+
+
+    .logout-btn i {
+      font-size: 18px;
+    }
+
+    .logout-btn:hover {
+      background: #ff4d4d;
+      color: #fff;
+      border-color: #ff4d4d;
+      transform: translateY(-2px);
+      box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
+    }
+
+    /* ===============================
+   HAMBURGER & OVERLAY
+================================ */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.logout-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 15px;
-  border-radius: 10px;
-  background: #ffe3e3;
-  color: #b30000;
-  font-weight: 600;
-  text-decoration: none;
-  border: 1px solid #ffb3b3;
-  transition: 0.3s;
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 1500;
 }
 
+/* ===============================
+   MOBILE (SAMA DENGAN DASHBOARD)
+================================ */
+@media (max-width: 768px) {
 
-.logout-btn i {
-  font-size: 18px;
+  body {
+    overflow-x: hidden;
+  }
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background-color: #f2e9dc;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 2000;
+    display: flex;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  .overlay.active {
+    display: block;
+  }
 }
 
-.logout-btn:hover {
-  background: #ff4d4d;
-  color: #fff;
-  border-color: #ff4d4d;
-  transform: translateY(-2px);
-  box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
-}
   </style>
 </head>
 
@@ -154,23 +219,27 @@ $admin_name = $_SESSION['username'];
       <a href="jadwal_admin.php"><i class="fas fa-calendar-alt"></i> Jadwal</a>
       <a href="peserta_admin.php"><i class="fas fa-users"></i> Peserta</a>
       <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
-      <a href="undangan_admin.php" ><i class="fas fa-envelope"></i> Undangan</a>
-      <a href="tambah_akun.php" ><i class="fas fa-envelope"></i> Tambah Akun</a>
+      <a href="undangan_admin.php"><i class="fas fa-envelope"></i> Undangan</a>
+      <a href="tambah_akun.php"><i class="fas fa-envelope"></i> Tambah Akun</a>
     </div>
     <div class="logout-box">
-    <a href="../logout.php" class="logout-btn">
+      <a href="../logout.php" class="logout-btn">
         <i class="fas fa-sign-out-alt"></i> Logout
-    </a>
+      </a>
     </div>
   </div>
+  </div> <!-- sidebar -->
+<div class="overlay" id="overlay"></div>
 
   <!-- MAIN -->
   <div class="main">
 
     <div class="topbar">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
       <h1>Kelola Undangan</h1>
       <i class="fas fa-bell"></i>
     </div>
+
 
     <!-- FORM KIRIM UNDANGAN -->
     <div class="card shadow-sm mb-4">
@@ -181,20 +250,20 @@ $admin_name = $_SESSION['username'];
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $meeting_id = $_POST['meeting_id'];
           $participant_id = $_POST['participant_id'];
-      
+
           // cek apakah peserta sudah diundang
           $cek = mysqli_query($koneksi, "SELECT * FROM meetings_participant 
                                          WHERE meeting_id='$meeting_id' 
                                          AND participant_id='$participant_id'");
-      
+
           if (mysqli_num_rows($cek) > 0) {
-              echo "<div class='alert alert-danger'>Peserta sudah diundang!</div>";
+            echo "<div class='alert alert-danger'>Peserta sudah diundang!</div>";
           } else {
-              mysqli_query($koneksi, "INSERT INTO meetings_participant (meeting_id, participant_id, attendance_status) 
+            mysqli_query($koneksi, "INSERT INTO meetings_participant (meeting_id, participant_id, attendance_status) 
                                       VALUES ('$meeting_id', '$participant_id', 'pending')");
-              echo "<div class='alert alert-success'>Undangan berhasil dikirim!</div>";
+            echo "<div class='alert alert-success'>Undangan berhasil dikirim!</div>";
           }
-      }
+        }
 
         ?>
 
@@ -212,7 +281,7 @@ $admin_name = $_SESSION['username'];
           </select>
 
           <label class="fw-semibold">Pilih Peserta</label>
-        <select name="participant_id" class="form-select mb-3" required>
+          <select name="participant_id" class="form-select mb-3" required>
             <option value="">-- Pilih Peserta --</option>
             <?php
             $peserta = mysqli_query($koneksi, "SELECT * FROM participant");
@@ -234,7 +303,9 @@ $admin_name = $_SESSION['username'];
 
         <h5 class="fw-bold mb-3">Daftar Undangan</h5>
 
-        <table class="table table-striped align-middle">
+        <div class="table-responsive">
+  <table class="table table-striped align-middle">
+
           <tr class="table-dark">
             <th>Judul Rapat</th>
             <th>Nama</th>
@@ -276,11 +347,42 @@ $admin_name = $_SESSION['username'];
           }
           ?>
         </table>
+        </div>
 
       </div>
     </div>
 
   </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('overlay');
+
+  if (!hamburgerBtn) return;
+
+  function openSidebar() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.contains('active')
+      ? closeSidebar()
+      : openSidebar();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+});
+</script>
 
 </body>
 

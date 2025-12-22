@@ -167,6 +167,65 @@ if (isset($_GET['error'])) {
   box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
 }
 
+/* ===============================
+   HAMBURGER & OVERLAY
+================================ */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 1500;
+}
+
+/* ===============================
+   MOBILE (SAMA DENGAN DASHBOARD)
+================================ */
+@media (max-width: 768px) {
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #f2e9dc;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 2000;
+    display: flex;
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .main {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .overlay.active {
+    display: block;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -187,11 +246,14 @@ if (isset($_GET['error'])) {
     </a>
   </div>
 </div>
+<div class="overlay" id="overlay"></div>
+
 
 <div class="main">
-  <div class="topbar">
-    <h1>Peserta Rapat</h1>
-    <div class="right">
+<div class="topbar">
+  <button class="hamburger" id="hamburgerBtn">☰</button>
+  <h1>Peserta Rapat</h1>
+  <div class="right">
       <div class="search-box">
         <input type="text" placeholder="Search peserta..." id="searchInput">
         <i class="fas fa-search"></i>
@@ -404,5 +466,36 @@ document.getElementById('filterDepartemen').addEventListener('change', function(
 document.getElementById('btnExport').addEventListener('click', () => alert('Fitur export data peserta akan dijalankan'));
 document.getElementById('btnPrint').addEventListener('click', () => window.print());
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('overlay');
+
+  if (!hamburgerBtn) return;
+
+  function openSidebar() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.contains('active')
+      ? closeSidebar()
+      : openSidebar();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+});
+</script>
+
 </body>
 </html>

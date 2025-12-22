@@ -1,8 +1,8 @@
-<?php 
+<?php
 session_start();
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== true) {
-    header("Location: ../login.php");
-    exit();
+  header("Location: ../login.php");
+  exit();
 }
 
 
@@ -29,7 +29,7 @@ $resultMeetings = mysqli_query($koneksi, $queryMeetings);
 $meetingsData = array();
 
 while ($row = mysqli_fetch_assoc($resultMeetings)) {
-    $meetingsData[] = $row;
+  $meetingsData[] = $row;
 }
 
 // Convert meetings data to JSON for JavaScript
@@ -38,6 +38,7 @@ $meetingsJson = json_encode($meetingsData);
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,13 +61,14 @@ $meetingsJson = json_encode($meetingsData);
 
     /* Sidebar */
     .sidebar {
-    width: 260px;
-    background-color: #f2e9dc;
-    display: flex;
-    flex-direction: column;
-    padding: 40px 25px;
-    height: 100vh; /* wajib */
-}
+      width: 260px;
+      background-color: #f2e9dc;
+      display: flex;
+      flex-direction: column;
+      padding: 40px 25px;
+      height: 100vh;
+      /* wajib */
+    }
 
 
     .sidebar h2 {
@@ -108,7 +110,7 @@ $meetingsJson = json_encode($meetingsData);
     .menu a:hover,
     .menu a.active {
       background-color: #e6dccb;
-  color: black;
+      color: black;
       font-weight: 600;
     }
 
@@ -176,7 +178,7 @@ $meetingsJson = json_encode($meetingsData);
       background-color: #f8f9fa;
       border-radius: 12px;
       padding: 25px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       margin-bottom: 30px;
     }
 
@@ -304,7 +306,7 @@ $meetingsJson = json_encode($meetingsData);
       border: 1px solid #ddd;
       border-radius: 8px;
       padding: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 1000;
       min-width: 300px;
       max-width: 400px;
@@ -344,10 +346,10 @@ $meetingsJson = json_encode($meetingsData);
     .stat-card {
       flex: 1;
       min-width: 250px;
-      background: linear-gradient(135deg, #8d8d8dff 0%, #8d8d8dff  100%);
+      background: linear-gradient(135deg, #8d8d8dff 0%, #8d8d8dff 100%);
       border-radius: 12px;
       padding: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       text-align: center;
       color: white;
     }
@@ -368,18 +370,27 @@ $meetingsJson = json_encode($meetingsData);
     }
 
     @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .main { padding: 20px; }
-      .stats-cards { 
+      .sidebar {
+        display: none;
+      }
+
+      .main {
+        padding: 20px;
+      }
+
+      .stats-cards {
         justify-content: center;
         flex-direction: column;
       }
+
       .stat-card {
         min-width: 100%;
       }
+
       .calendar-grid {
         gap: 4px;
       }
+
       .calendar-date {
         padding: 10px 0;
         font-size: 12px;
@@ -388,45 +399,93 @@ $meetingsJson = json_encode($meetingsData);
     }
 
     .logout-box {
-    margin-top: auto;
-    padding-top: 40px;
+      margin-top: auto;
+      padding-top: 40px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 15px;
+      border-radius: 10px;
+      background: #ffe3e3;
+      color: #b30000;
+      font-weight: 600;
+      text-decoration: none;
+      border: 1px solid #ffb3b3;
+      transition: 0.3s;
+    }
+
+
+    .logout-btn i {
+      font-size: 18px;
+    }
+
+    .logout-btn:hover {
+      background: #ff4d4d;
+      color: #fff;
+      border-color: #ff4d4d;
+      transform: translateY(-2px);
+      box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
+    }
+
+    /* HAMBURGER */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
-.logout-btn {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 15px;
-    border-radius: 10px;
-    background: #ffe3e3;
-    color: #b30000;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid #ffb3b3;
-    transition: 0.3s;
+/* OVERLAY */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 1500;
 }
 
+/* MOBILE */
+@media (max-width: 768px) {
 
-.logout-btn i {
-    font-size: 18px;
+  .hamburger {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 2000;
+    display: flex; /* GANTI dari display:none */
+  }
+
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .overlay.active {
+    display: block;
+  }
 }
-
-.logout-btn:hover {
-    background: #ff4d4d;
-    color: #fff;
-    border-color: #ff4d4d;
-    transform: translateY(-2px);
-    box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
-}
-
 
   </style>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
+
+
   <!-- Sidebar -->
   <div class="sidebar">
+  
     <h2>Pengelolaan Rapat</h2>
     <h3>Selamat datang, <?= $admin_name ?>!</h3>
     <div class="menu">
@@ -435,21 +494,23 @@ $meetingsJson = json_encode($meetingsData);
       <a href="peserta_admin.php"><i class="fas fa-user-graduate"></i> Peserta</a>
       <a href="notulen_admin.php"><i class="fas fa-file-alt"></i> Notulen</a>
       <a href="undangan_admin.php"><i class="fas fa-file-alt"></i> Undangan</a>
-      <a href="tambah_akun.php"><i class="fas fa-file-alt"></i>  Tambah Akun</a>
+      <a href="tambah_akun.php"><i class="fas fa-file-alt"></i> Tambah Akun</a>
     </div>
     <div class="logout-box">
-    <a href="../logout.php" class="logout-btn">
+      <a href="../logout.php" class="logout-btn">
         <i class="fas fa-sign-out-alt"></i> Logout
-    </a>
-</div>
+      </a>
+    </div>
   </div>
-
+  <div class="overlay" id="overlay"></div>
 
 
   <!-- Main Content -->
   <div class="main">
     <div class="topbar">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
       <h1>Admin</h1>
+
       <div class="right">
         <div class="search-box">
           <input type="text" placeholder="Search...">
@@ -458,6 +519,7 @@ $meetingsJson = json_encode($meetingsData);
         <i class="fas fa-bell bell"></i>
       </div>
     </div>
+
 
     <!-- Calendar Section -->
     <div class="calendar-section">
@@ -499,7 +561,7 @@ $meetingsJson = json_encode($meetingsData);
   <script>
     // Get meetings data from PHP
     const meetingsData = <?php echo $meetingsJson; ?>;
-    
+
     // Convert meetings data to a more usable format
     const meetingsMap = {};
     meetingsData.forEach(meeting => {
@@ -513,21 +575,21 @@ $meetingsJson = json_encode($meetingsData);
 
     // Calendar functionality
     let currentDate = new Date();
-    
+
     function formatTime(timeString) {
       if (!timeString) return '';
       const time = new Date(`1970-01-01T${timeString}`);
-      return time.toLocaleTimeString('id-ID', { 
-        hour: '2-digit', 
+      return time.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
         minute: '2-digit',
-        hour12: false 
+        hour12: false
       });
     }
 
     function showMeetingTooltip(meetings, x, y) {
       const tooltip = document.getElementById('meetingTooltip');
       let html = '';
-      
+
       meetings.forEach((meeting, index) => {
         html += `
           <div style="margin-bottom: ${index < meetings.length - 1 ? '15px' : '0'}">
@@ -539,7 +601,7 @@ $meetingsJson = json_encode($meetingsData);
           </div>
         `;
       });
-      
+
       tooltip.innerHTML = html;
       tooltip.style.display = 'block';
       tooltip.style.left = (x + 10) + 'px';
@@ -549,36 +611,37 @@ $meetingsJson = json_encode($meetingsData);
     function hideMeetingTooltip() {
       document.getElementById('meetingTooltip').style.display = 'none';
     }
-    
+
     function updateCalendar() {
       const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
-                         "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-      
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+
       const year = currentDate.getFullYear();
       const month = currentDate.getMonth();
-      
+
       // Update month display
       document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
-      
+
       // Get first day of month and number of days
       const firstDay = new Date(year, month, 1);
       const lastDay = new Date(year, month + 1, 0);
       const daysInMonth = lastDay.getDate();
       const startingDay = firstDay.getDay();
-      
+
       // Adjust starting day for Indonesian calendar (Monday first)
       const adjustedStartingDay = startingDay === 0 ? 6 : startingDay - 1;
-      
+
       // Get previous month days
       const prevMonthLastDay = new Date(year, month, 0).getDate();
-      
+
       // Clear calendar
       const calendarGrid = document.getElementById('calendarDates');
       // Keep the day headers
       while (calendarGrid.children.length > 7) {
         calendarGrid.removeChild(calendarGrid.lastChild);
       }
-      
+
       // Add previous month days
       for (let i = adjustedStartingDay - 1; i >= 0; i--) {
         const dateElement = document.createElement('div');
@@ -586,27 +649,27 @@ $meetingsJson = json_encode($meetingsData);
         dateElement.textContent = prevMonthLastDay - i;
         calendarGrid.appendChild(dateElement);
       }
-      
+
       // Add current month days
       const today = new Date();
       for (let i = 1; i <= daysInMonth; i++) {
         const dateElement = document.createElement('div');
         dateElement.className = 'calendar-date';
         dateElement.textContent = i;
-        
+
         // Create date string for comparison
         const currentDateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-        
+
         // Check if today
         if (today.getDate() === i && today.getMonth() === month && today.getFullYear() === year) {
           dateElement.classList.add('today');
         }
-        
+
         // Check if date has meetings from database
         if (meetingsMap[currentDateString]) {
           const meetings = meetingsMap[currentDateString];
           dateElement.classList.add('has-meeting');
-          
+
           // Add meeting dot indicator
           const meetingDot = document.createElement('div');
           meetingDot.className = 'meeting-dot';
@@ -619,24 +682,24 @@ $meetingsJson = json_encode($meetingsData);
             meetingCount.textContent = meetings.length;
             dateElement.appendChild(meetingCount);
           }
-          
+
           // Add event listeners for tooltip
           dateElement.addEventListener('mouseenter', function(e) {
             showMeetingTooltip(meetings, e.pageX, e.pageY);
           });
-          
+
           dateElement.addEventListener('mousemove', function(e) {
             const tooltip = document.getElementById('meetingTooltip');
             tooltip.style.left = (e.pageX + 10) + 'px';
             tooltip.style.top = (e.pageY + 10) + 'px';
           });
-          
+
           dateElement.addEventListener('mouseleave', hideMeetingTooltip);
         }
-        
+
         calendarGrid.appendChild(dateElement);
       }
-      
+
       // Add next month days to fill grid
       const totalCells = 42; // 6 rows * 7 days
       const remainingCells = totalCells - (adjustedStartingDay + daysInMonth);
@@ -647,23 +710,53 @@ $meetingsJson = json_encode($meetingsData);
         calendarGrid.appendChild(dateElement);
       }
     }
-    
+
     // Navigation buttons
     document.getElementById('prevMonth').addEventListener('click', function() {
       currentDate.setMonth(currentDate.getMonth() - 1);
       updateCalendar();
     });
-    
+
     document.getElementById('nextMonth').addEventListener('click', function() {
       currentDate.setMonth(currentDate.getMonth() + 1);
       updateCalendar();
     });
-    
+
     // Initialize calendar
     updateCalendar();
 
     // Hide tooltip when clicking anywhere
     document.addEventListener('click', hideMeetingTooltip);
   </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('overlay');
+
+  function openSidebar() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.contains('active')
+      ? closeSidebar()
+      : openSidebar();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+});
+</script>
+
 </body>
+
 </html>

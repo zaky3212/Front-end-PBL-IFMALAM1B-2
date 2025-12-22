@@ -1,61 +1,72 @@
 /* ===== Global ===== */
-body {
+* {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #f2e9dc);
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: fadeIn 0.8s ease-out;  
+  background: linear-gradient(135deg, #f2e9dc, #fff);
 }
 
-/* ===== Card Utama ===== */
+/* ===== Container ===== */
 .container {
-  width: 880px;
-  height: 520px;
+  display: flex;
+  flex-wrap: wrap; /* biar anak tumpuk di mobile */
+  width: 900px;
+  max-width: 95%;
   background: rgba(255, 255, 255, 0.35);
   backdrop-filter: blur(15px);
   border-radius: 22px;
-  box-shadow: 0 18px 45px rgba(0,0,0,0.2);
-  display: flex;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 18px 45px rgba(0,0,0,0.2);
+  height: auto;
 }
 
 /* ===== Left Side ===== */
 .left-side {
-  width: 45%;
+  flex: 1 1 300px; /* fleksibel dan min-width 300px */
   padding: 40px;
   background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
   border-right: 1px solid rgba(255,255,255,0.3);
   color: #3a2c1f;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .left-side h1 {
-  font-size: 30px;
+  font-size: 32px;
   font-weight: 700;
 }
 
 .left-side p {
   font-size: 15px;
+  margin-top: 15px;
   opacity: 0.9;
-  margin-top: 10px;
 }
 
 /* ===== Login Box ===== */
 .login-box {
-  width: 55%;
-  padding: 50px;
+  flex: 1 1 300px; /* fleksibel dan min-width 300px */
+  padding: 50px 35px;
   background: #fffdfc;
-  color: #3a2c1f;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-box h2 {
   text-align: center;
   font-size: 28px;
-  margin-bottom: 8px;
   font-weight: 700;
+  margin-bottom: 10px;
 }
 
 .subtitle {
@@ -75,13 +86,13 @@ body {
   top: 50%;
   left: 12px;
   transform: translateY(-50%);
-  font-size: 17px;
+  font-size: 16px;
   color: #b37a4c;
 }
 
 .input-group input {
-  width: 86%;
-  padding: 12px 12px 12px 40px;
+  width: 100%;
+  padding: 12px 12px 12px 38px; /* dikurangi supaya muat di mobile */
   border: 1px solid #d5bda7;
   background: #fff8f3;
   border-radius: 10px;
@@ -89,7 +100,7 @@ body {
   transition: 0.3s;
 }
 
-input:focus {
+.input-group input:focus {
   border-color: #b37a4c;
   outline: none;
   box-shadow: 0 0 6px rgba(179,122,76,0.4);
@@ -99,14 +110,15 @@ input:focus {
 button {
   width: 100%;
   padding: 13px;
-  background: #b37a4c;
-  color: white;
   border: none;
   border-radius: 10px;
   font-size: 16px;
-  cursor: pointer;
   font-weight: 600;
+  cursor: pointer;
+  background: #b37a4c;
+  color: #fff;
   transition: 0.3s;
+  margin-top: 10px;
 }
 
 button:hover {
@@ -117,18 +129,31 @@ button:hover {
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .container {
-    width: 90%;
     flex-direction: column;
-    height: auto;
   }
 
   .left-side, .login-box {
     width: 100%;
+    padding: 25px 20px;
+    text-align: center;
   }
+
+  .left-side {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+  }
+}
+
+@media (max-width: 500px) {
+  .left-side h1 { font-size: 24px; }
+  .login-box h2 { font-size: 22px; }
+  .subtitle { font-size: 12px; }
+  .input-group input { font-size: 13px; padding-left: 35px; }
+  button { font-size: 14px; padding: 12px; }
 }
 
 /* ===== Fade-in ===== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 }

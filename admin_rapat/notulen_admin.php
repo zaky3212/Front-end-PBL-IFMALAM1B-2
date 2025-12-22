@@ -514,16 +514,7 @@ textarea.form-control {
   color: #666;
 }
 
-@media (max-width: 768px) {
-  .sidebar { display: none; }
-  .main { padding: 20px; }
-  .notulen-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-  .tools-section { flex-direction: column; align-items: flex-start; }
-  .filter-group { flex-direction: column; width: 100%; }
-  .notulen-table { font-size: 14px; }
-  .notulen-table th, .notulen-table td { padding: 10px; }
-  .form-row { flex-direction: column; }
-}
+
 
 .logout-box {
   margin-top: auto;
@@ -557,6 +548,61 @@ textarea.form-control {
   transform: translateY(-2px);
   box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
 }
+
+/* HAMBURGER */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* OVERLAY */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 1500;
+}
+
+@media (max-width: 768px) {
+
+.hamburger {
+  display: block;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background-color: #f2e9dc;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 2000;
+  display: flex;
+}
+
+.sidebar.active {
+  transform: translateX(0);
+}
+
+.main {
+  width: 100%;
+  padding: 20px;
+}
+
+.overlay.active {
+  display: block;
+}
+}
     </style>
   </head>
   <body>
@@ -578,19 +624,23 @@ textarea.form-control {
     </a>
     </div>
     </div>
+    <div class="overlay" id="overlay"></div>
 
     <!-- Main Content -->
     <div class="main">
-      <div class="topbar">
-        <h1>Notulen Rapat</h1>
-        <div class="right">
-          <div class="search-box">
-            <input type="text" placeholder="Search notulen...">
-            <i class="fas fa-search"></i>
-          </div>
-          <i class="fas fa-bell bell"></i>
-        </div>
-      </div>
+    <div class="topbar">
+  <button class="hamburger" id="hamburgerBtn">☰</button>
+  <h1>Notulen Rapat</h1>
+
+  <div class="right">
+    <div class="search-box">
+      <input type="text" placeholder="Search notulen...">
+      <i class="fas fa-search"></i>
+    </div>
+    <i class="fas fa-bell bell"></i>
+  </div>
+</div>
+
 
       <!-- Notulen Content -->
       <div class="notulen-container">
@@ -928,5 +978,32 @@ textarea.form-control {
         alert('Mengunduh notulen dalam format PDF');
       });
     </script>
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('overlay');
+
+  function openSidebar() {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
+  }
+
+  hamburgerBtn.addEventListener('click', () => {
+    sidebar.classList.contains('active')
+      ? closeSidebar()
+      : openSidebar();
+  });
+
+  overlay.addEventListener('click', closeSidebar);
+});
+</script>
   </body>
   </html>
