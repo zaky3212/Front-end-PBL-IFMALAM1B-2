@@ -339,7 +339,7 @@ $admin_name = $_SESSION['username'];
               <td>{$d['email']}</td>
               <td>$s</td>
               <td>
-                <a href='undangan_edit.php?id={$d['mpid']}' class='btn btn-outline-primary btn-sm'>Edit</a>
+                <a href='undangan_edit_admin.php?id={$d['mpid']}' class='btn btn-outline-primary btn-sm'>Edit</a>
                 <a href='undangan_hapus.php?id={$d['mpid']}' class='btn btn-outline-danger btn-sm' onclick='return confirm(\"Yakin menghapus undangan ini?\")'>Hapus</a>
               </td>
             </tr>

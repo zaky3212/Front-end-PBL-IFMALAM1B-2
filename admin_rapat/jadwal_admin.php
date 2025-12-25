@@ -97,6 +97,12 @@
 
     // Proses form tambah/edit rapat
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      $today = date('Y-m-d');
+
+      if ($_POST['dates'] < $today) {
+        header("Location: " . $_SERVER['PHP_SELF'] . "?error=date_invalid");
+        exit();
+      }
       if (isset($_POST['action'])) {
         $action = $_POST['action'];
 
@@ -175,6 +181,9 @@
           break;
         case '3':
           $error_msg = "Gagal menghapus rapat!";
+          break;
+        case 'date_invalid':
+          $error_msg = "Tanggal rapat tidak boleh tanggal yang sudah lewat!";
           break;
       }
     }
@@ -653,39 +662,38 @@
         }
 
         .table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
+          width: 100%;
+          overflow-x: auto;
+        }
 
-@media (max-width: 768px) {
-  .sidebar {
-    box-shadow: 4px 0 20px rgba(0,0,0,0.2);
-  }
-}
+        @media (max-width: 768px) {
+          .sidebar {
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+          }
+        }
 
-/* OVERLAY UNTUK MOBILE */
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.3);
-  z-index: 1500;
-}
+        /* OVERLAY UNTUK MOBILE */
+        .overlay {
+          display: none;
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.3);
+          z-index: 1500;
+        }
 
-/* MOBILE */
-@media (max-width: 768px) {
-  .overlay.active {
-    display: block;
-  }
-}
-
+        /* MOBILE */
+        @media (max-width: 768px) {
+          .overlay.active {
+            display: block;
+          }
+        }
       </style>
     </head>
 
     <body>
       <!-- Sidebar -->
       <div class="sidebar">
-     
+
         <h2>Pengelolaan Rapat</h2>
         <h3>Selamat datang, <?= $admin_name ?>!</h3>
         <div class="menu">
@@ -706,111 +714,111 @@
       <div class="overlay" id="overlay"></div>
 
       <!-- Main Content -->
-<div class="main">
+      <div class="main">
 
-<div class="topbar">
-  <button class="hamburger" id="hamburgerBtn">☰</button>
-  <h1>Jadwal Rapat</h1>
+        <div class="topbar">
+          <button class="hamburger" id="hamburgerBtn">☰</button>
+          <h1>Jadwal Rapat</h1>
 
-  <div class="search-box">
-    <input type="text" placeholder="Search..." id="searchInput">
-    <i class="fas fa-search"></i>
-  </div>
-</div>
+          <div class="search-box">
+            <input type="text" placeholder="Search..." id="searchInput">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
 
-<div class="jadwal-container">
+        <div class="jadwal-container">
 
-  <?php if (!empty($success_msg)): ?>
-    <div class="alert alert-success"><?= $success_msg ?></div>
-  <?php endif; ?>
+          <?php if (!empty($success_msg)): ?>
+            <div class="alert alert-success"><?= $success_msg ?></div>
+          <?php endif; ?>
 
-  <?php if (!empty($error_msg)): ?>
-    <div class="alert alert-error"><?= $error_msg ?></div>
-  <?php endif; ?>
+          <?php if (!empty($error_msg)): ?>
+            <div class="alert alert-error"><?= $error_msg ?></div>
+          <?php endif; ?>
 
-  <div class="jadwal-header">
-    <h2>Daftar Rapat</h2>
-    <button class="btn-tambah" id="btnTambahRapat">
-      <i class="fas fa-plus"></i> Tambah Rapat
-    </button>
-  </div>
+          <div class="jadwal-header">
+            <h2>Daftar Rapat</h2>
+            <button class="btn-tambah" id="btnTambahRapat">
+              <i class="fas fa-plus"></i> Tambah Rapat
+            </button>
+          </div>
 
-  <!-- TABLE WAJIB DI DALAM MAIN -->
-  <div class="table-responsive">
-    <table class="jadwal-table">
-      <thead>
-        <tr>
-          <th>Judul Rapat</th>
-          <th>Deskripsi</th>
-          <th>Tanggal</th>
-          <th>Waktu</th>
-          <th>Lokasi</th>
-          <th>Pemimpin</th>
-          <th>Status</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
+          <!-- TABLE WAJIB DI DALAM MAIN -->
+          <div class="table-responsive">
+            <table class="jadwal-table">
+              <thead>
+                <tr>
+                  <th>Judul Rapat</th>
+                  <th>Deskripsi</th>
+                  <th>Tanggal</th>
+                  <th>Waktu</th>
+                  <th>Lokasi</th>
+                  <th>Pemimpin</th>
+                  <th>Status</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
 
-      <tbody id="tableBody">
-        <?php if (count($meetings) > 0): ?>
-          <?php foreach ($meetings as $meeting): ?>
-            <?php
-            $status = !empty($meeting['status_meetings'])
-              ? $meeting['status_meetings']
-              : getStatus($meeting['dates'], $meeting['start_time'], $meeting['end_time']);
+              <tbody id="tableBody">
+                <?php if (count($meetings) > 0): ?>
+                  <?php foreach ($meetings as $meeting): ?>
+                    <?php
+                    $status = !empty($meeting['status_meetings'])
+                      ? $meeting['status_meetings']
+                      : getStatus($meeting['dates'], $meeting['start_time'], $meeting['end_time']);
 
-            $statusClass = match ($status) {
-              'Selesai' => 'status-selesai',
-              'Berlangsung' => 'status-berlangsung',
-              default => 'status-mendatang'
-            };
-            ?>
-            <tr>
-              <td><?= htmlspecialchars($meeting['title']) ?></td>
-              <td><?= htmlspecialchars($meeting['descriptions']) ?></td>
-              <td><?= date('d M Y', strtotime($meeting['dates'])) ?></td>
-              <td><?= $meeting['start_time'] ?> - <?= $meeting['end_time'] ?></td>
-              <td><?= htmlspecialchars($meeting['locations']) ?></td>
-              <td><?= htmlspecialchars($meeting['leader']) ?></td>
-              <td>
-                <span class="status-badge <?= $statusClass ?>">
-                  <?= $status ?>
-                </span>
-              </td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn-action btn-edit"
-                    data-id="<?= $meeting['id'] ?>"
-                    data-title="<?= htmlspecialchars($meeting['title']) ?>"
-                    data-descriptions="<?= htmlspecialchars($meeting['descriptions']) ?>"
-                    data-dates="<?= $meeting['dates'] ?>"
-                    data-start-time="<?= $meeting['start_time'] ?>"
-                    data-end-time="<?= $meeting['end_time'] ?>"
-                    data-locations="<?= htmlspecialchars($meeting['locations']) ?>"
-                    data-leader="<?= htmlspecialchars($meeting['leader']) ?>">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
+                    $statusClass = match ($status) {
+                      'Selesai' => 'status-selesai',
+                      'Berlangsung' => 'status-berlangsung',
+                      default => 'status-mendatang'
+                    };
+                    ?>
+                    <tr>
+                      <td><?= htmlspecialchars($meeting['title']) ?></td>
+                      <td><?= htmlspecialchars($meeting['descriptions']) ?></td>
+                      <td><?= date('d M Y', strtotime($meeting['dates'])) ?></td>
+                      <td><?= $meeting['start_time'] ?> - <?= $meeting['end_time'] ?></td>
+                      <td><?= htmlspecialchars($meeting['locations']) ?></td>
+                      <td><?= htmlspecialchars($meeting['leader']) ?></td>
+                      <td>
+                        <span class="status-badge <?= $statusClass ?>">
+                          <?= $status ?>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="action-buttons">
+                          <button class="btn-action btn-edit"
+                            data-id="<?= $meeting['id'] ?>"
+                            data-title="<?= htmlspecialchars($meeting['title']) ?>"
+                            data-descriptions="<?= htmlspecialchars($meeting['descriptions']) ?>"
+                            data-dates="<?= $meeting['dates'] ?>"
+                            data-start-time="<?= $meeting['start_time'] ?>"
+                            data-end-time="<?= $meeting['end_time'] ?>"
+                            data-locations="<?= htmlspecialchars($meeting['locations']) ?>"
+                            data-leader="<?= htmlspecialchars($meeting['leader']) ?>">
+                            <i class="fas fa-edit"></i> Edit
+                          </button>
 
-                  <a href="?hapus=<?= $meeting['id'] ?>"
-                    class="btn-action btn-hapus"
-                    onclick="return confirm('Yakin hapus rapat ini?')">
-                    <i class="fas fa-trash"></i> Hapus
-                  </a>
-                </div>
-              </td>
-            </tr>
-          <?php endforeach; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="8" style="text-align:center;">Tidak ada data rapat</td>
-          </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </div>
+                          <a href="?hapus=<?= $meeting['id'] ?>"
+                            class="btn-action btn-hapus"
+                            onclick="return confirm('Yakin hapus rapat ini?')">
+                            <i class="fas fa-trash"></i> Hapus
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                <?php else: ?>
+                  <tr>
+                    <td colspan="8" style="text-align:center;">Tidak ada data rapat</td>
+                  </tr>
+                <?php endif; ?>
+              </tbody>
+            </table>
+          </div>
 
-</div>
-</div>
+        </div>
+      </div>
 
       <!-- Modal Tambah/Edit -->
       <div class="modal" id="modalTambahRapat">
@@ -833,7 +841,7 @@
               </div>
               <div class="form-group">
                 <label>Tanggal *</label>
-                <input type="date" id="dates" name="dates" class="form-control" required>
+                <input type="date" id="dates" name="dates" class="form-control" required min="<?= date('Y-m-d') ?>">
               </div>
               <div class="form-group">
                 <label>Waktu Mulai *</label>
@@ -859,6 +867,23 @@
           </form>
         </div>
       </div>
+
+      <script>
+        const dateInput = document.getElementById('dates');
+
+        dateInput.addEventListener('change', function() {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const selectedDate = new Date(this.value);
+
+          if (selectedDate < today) {
+            alert('Tanggal rapat tidak boleh kurang dari hari ini!');
+            this.value = '';
+          }
+        });
+      </script>
+
 
       <script>
         const modal = document.getElementById('modalTambahRapat');
@@ -933,34 +958,33 @@
             row.style.display = text.includes(searchText) ? '' : 'none';
           });
         });
-
       </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const sidebar = document.querySelector('.sidebar');
-  const overlay = document.getElementById('overlay');
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const hamburgerBtn = document.getElementById('hamburgerBtn');
+          const sidebar = document.querySelector('.sidebar');
+          const overlay = document.getElementById('overlay');
 
-  function openSidebar() {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
+          function openSidebar() {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
 
-  function closeSidebar() {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-    document.body.style.overflow = 'auto';
-  }
+          function closeSidebar() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+          }
 
-  hamburgerBtn.addEventListener('click', () => {
-    sidebar.classList.contains('active') ? closeSidebar() : openSidebar();
-  });
+          hamburgerBtn.addEventListener('click', () => {
+            sidebar.classList.contains('active') ? closeSidebar() : openSidebar();
+          });
 
-  overlay.addEventListener('click', closeSidebar);
-});
-</script>
+          overlay.addEventListener('click', closeSidebar);
+        });
+      </script>
 
     </body>
 
