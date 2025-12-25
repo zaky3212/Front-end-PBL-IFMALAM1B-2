@@ -85,7 +85,7 @@ body {
   margin-bottom: 25px;
 }
 
-/* ===== Input ===== */
+
 .input-group {
   position: relative;
   margin-bottom: 18px;
@@ -102,7 +102,7 @@ body {
 
 .input-group input {
   width: 100%;
-  padding: 12px 12px 12px 38px; /* dikurangi supaya muat di mobile */
+  padding: 12px 12px 12px 38px; 
   border: 1px solid #d5bda7;
   background: #fff8f3;
   border-radius: 10px;
@@ -136,7 +136,7 @@ button:hover {
   transform: scale(1.02);
 }
 
-/* ===== Responsive ===== */
+
 @media (max-width: 900px) {
   .container {
     flex-direction: column;
@@ -162,7 +162,7 @@ button:hover {
   button { font-size: 14px; padding: 12px; }
 }
 
-/* ===== Fade-in ===== */
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -173,13 +173,13 @@ button:hover {
 <body>
 
 <div class="container">
-    <!-- Left Side -->
+    
     <div class="left-side">
         <h1>Sistem Pengelolaan Rapat</h1>
         <p>Kelola jadwal, peserta, dan dokumentasi rapat dengan efisien dalam satu platform.</p>
     </div>
 
-    <!-- Login Box -->
+    
     <div class="login-box">
         <h2>Selamat Datang</h2>
         <p class="subtitle">Masukkan email dan password untuk melanjutkan</p>
