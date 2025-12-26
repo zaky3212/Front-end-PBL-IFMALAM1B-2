@@ -214,8 +214,8 @@ $meetingsJson = json_encode($meetingsData);
     }
 
     .calendar-nav button:hover {
-      background-color: #00f7ff;
-      border-color: #00f7ff;
+      background-color: #e6dccb;
+      border-color: #e6dccb;
     }
 
     .calendar-grid {
@@ -247,10 +247,12 @@ $meetingsJson = json_encode($meetingsData);
       min-height: 60px;
     }
 
-    .calendar-date:hover {
-      background-color: #e6f7ff;
+    .calendar-date:not(.today):hover {
+      background-color: #e6dccb;
       transform: scale(1.05);
     }
+
+
 
     .calendar-date.today {
       background-color: #00f7ff;
@@ -432,50 +434,50 @@ $meetingsJson = json_encode($meetingsData);
     }
 
     /* HAMBURGER */
-.hamburger {
-  display: none;
-  font-size: 26px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
+    .hamburger {
+      display: none;
+      font-size: 26px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
 
-/* OVERLAY */
-.overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.3);
-  z-index: 1500;
-}
+    /* OVERLAY */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1500;
+    }
 
-/* MOBILE */
-@media (max-width: 768px) {
+    /* MOBILE */
+    @media (max-width: 768px) {
 
-  .hamburger {
-    display: block;
-  }
+      .hamburger {
+        display: block;
+      }
 
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    z-index: 2000;
-    display: flex; /* GANTI dari display:none */
-  }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 2000;
+        display: flex;
+        /* GANTI dari display:none */
+      }
 
-  .sidebar.active {
-    transform: translateX(0);
-  }
+      .sidebar.active {
+        transform: translateX(0);
+      }
 
-  .overlay.active {
-    display: block;
-  }
-}
-
+      .overlay.active {
+        display: block;
+      }
+    }
   </style>
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
@@ -485,7 +487,7 @@ $meetingsJson = json_encode($meetingsData);
 
   <!-- Sidebar -->
   <div class="sidebar">
-  
+
     <h2>Pengelolaan Rapat</h2>
     <h3>Selamat datang, <?= $admin_name ?>!</h3>
     <div class="menu">
@@ -513,7 +515,7 @@ $meetingsJson = json_encode($meetingsData);
 
       <div class="right">
         <div class="search-box">
-          <input type="text" placeholder="Search...">
+          <input type="date" id="searchDate">
           <i class="fas fa-search"></i>
         </div>
         <i class="fas fa-bell bell"></i>
@@ -729,33 +731,96 @@ $meetingsJson = json_encode($meetingsData);
     document.addEventListener('click', hideMeetingTooltip);
   </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  const hamburgerBtn = document.getElementById('hamburgerBtn');
-  const sidebar = document.querySelector('.sidebar');
-  const overlay = document.getElementById('overlay');
+  <script>
+    const searchDateInput = document.getElementById('searchDate');
 
-  function openSidebar() {
-    sidebar.classList.add('active');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
+    searchDateInput.addEventListener('change', function() {
+      const selectedDate = this.value; // format YYYY-MM-DD
 
-  function closeSidebar() {
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-    document.body.style.overflow = 'auto';
-  }
+      if (!selectedDate) {
+        updateCalendar(); // reset kalender
+        return;
+      }
 
-  hamburgerBtn.addEventListener('click', () => {
-    sidebar.classList.contains('active')
-      ? closeSidebar()
-      : openSidebar();
-  });
+      // Filter meeting berdasarkan tanggal
+      const filteredMeetings = meetingsData.filter(meeting => {
+        return meeting.dates === selectedDate;
+      });
 
-  overlay.addEventListener('click', closeSidebar);
-});
-</script>
+      renderFilteredCalendar(selectedDate, filteredMeetings);
+    });
+
+    function renderFilteredCalendar(dateString, meetings) {
+      const calendarGrid = document.getElementById('calendarDates');
+
+      // Hapus tanggal lama (kecuali header hari)
+      while (calendarGrid.children.length > 7) {
+        calendarGrid.removeChild(calendarGrid.lastChild);
+      }
+
+      // Ambil tanggal yang dicari
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const day = date.getDate();
+
+      document.getElementById('calendarMonth').textContent =
+        `${day}-${month + 1}-${year}`;
+
+      // Buat 1 cell tanggal
+      const dateElement = document.createElement('div');
+      dateElement.className = 'calendar-date has-meeting';
+      dateElement.textContent = day;
+
+      const meetingDot = document.createElement('div');
+      meetingDot.className = 'meeting-dot';
+      dateElement.appendChild(meetingDot);
+
+      if (meetings.length > 1) {
+        const meetingCount = document.createElement('div');
+        meetingCount.className = 'meeting-info';
+        meetingCount.textContent = meetings.length;
+        dateElement.appendChild(meetingCount);
+      }
+
+      dateElement.addEventListener('mouseenter', function(e) {
+        showMeetingTooltip(meetings, e.pageX, e.pageY);
+      });
+
+      dateElement.addEventListener('mouseleave', hideMeetingTooltip);
+
+      calendarGrid.appendChild(dateElement);
+    }
+  </script>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('overlay');
+
+      function openSidebar() {
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+      }
+
+      hamburgerBtn.addEventListener('click', () => {
+        sidebar.classList.contains('active') ?
+          closeSidebar() :
+          openSidebar();
+      });
+
+      overlay.addEventListener('click', closeSidebar);
+    });
+  </script>
 
 </body>
 
