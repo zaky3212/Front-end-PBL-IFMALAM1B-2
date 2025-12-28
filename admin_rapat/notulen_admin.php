@@ -656,26 +656,28 @@
         </div>
 
         <!-- Tools Section -->
-        <div class="tools-section">
-          <div class="filter-group">
-            <select class="filter-select" id="filterStatus">
-              <option value="all">Semua Status</option>
-              <option value="draft">Draft</option>
-              <option value="review">Review</option>
-              <option value="selesai">Selesai</option>
-            </select>
-            <select class="filter-select" id="filterRapat">
-              <option value="all">Semua Rapat</option>
-              <option value="rapat-koordinasi">Rapat Koordinasi</option>
-              <option value="rapat-evaluasi">Rapat Evaluasi</option>
-              <option value="rapat-perencanaan">Rapat Perencanaan</option>
-            </select>
-            <input type="date" class="filter-select" id="filterTanggal">
-          </div>
-          <div class="action-tools">
-          
-          </div>
+        <div class="filter-group">
+          <select id="filterStatus" class="filter-select">
+            <option value="all">Semua Status</option>
+            <option value="draft">Draft</option>
+            <option value="review">Review</option>
+            <option value="selesai">Selesai</option>
+          </select>
+
+          <select id="filterRapat" class="filter-select">
+            <option value="all">Semua Judul</option>
+            <option value="rapat koordinasi">Rapat Koordinasi</option>
+            <option value="rapat evaluasi">Rapat Evaluasi</option>
+            <option value="rapat perencanaan">Rapat Perencanaan</option>
+          </select>
+
+          <input type="date" id="filterTanggal" class="filter-select">
         </div>
+
+        <small id="filterInfo" style="display:none;color:#888">
+          Filter aktif setelah notulen tersedia
+        </small>
+
 
         <!-- Notulen Table -->
         <table class="notulen-table">
@@ -691,35 +693,45 @@
           </thead>
           <tbody id="tableBody">
             <?php
-            // Ambil data dari database
             $query = "SELECT * FROM minutes ORDER BY created_at DESC";
             $result = mysqli_query($koneksi, $query);
 
             while ($row = mysqli_fetch_assoc($result)) {
-              $statusClass = 'status-draft';
-              $statusText = 'Draft';
 
-              // Potong teks agenda jika terlalu panjang
-              $agenda = strlen($row['agenda']) > 50 ? substr($row['agenda'], 0, 50) . '...' : $row['agenda'];
+              $status  = $row['status'];
+              $judul   = strtolower($row['title']);
+              $tanggal = date('Y-m-d', strtotime($row['created_at']));
 
-              echo "<tr data-id='{$row['id']}'>
-                <td>{$row['title']}</td>
-                <td>{$agenda}</td>
-                <td>" . date('d M Y', strtotime($row['created_at'])) . "</td>
-                <td>{$row['created_by']}</td>
-                <td><span class='status-badge {$statusClass}'>{$statusText}</span></td>
+              $agenda = strlen($row['agenda']) > 50
+                ? substr($row['agenda'], 0, 50) . '...'
+                : $row['agenda'];
+            ?>
+              <tr
+                data-id="<?= $row['id'] ?>"
+                data-status="<?= $status ?>"
+                data-rapat="<?= $judul ?>"
+                data-tanggal="<?= $tanggal ?>"
+                data-agenda="<?= htmlspecialchars($row['agenda']) ?>"
+                data-notes="<?= htmlspecialchars($row['notes']) ?>"
+                data-decisions="<?= htmlspecialchars($row['decisions']) ?>"
+                data-followup="<?= htmlspecialchars($row['follow_up']) ?>">
+                <td><?= $row['title'] ?></td>
+                <td><?= $agenda ?></td>
+                <td><?= date('d M Y', strtotime($row['created_at'])) ?></td>
+                <td><?= $row['created_by'] ?></td>
+                <td><?= ucfirst($status) ?></td>
                 <td>
-                  <div class='action-buttons'>
-                    <button class='btn-action btn-view' data-id='{$row['id']}'><i class='fas fa-eye'></i> Lihat</button>
-                    <button class='btn-action btn-edit' data-id='{$row['id']}'><i class='fas fa-edit'></i> Edit</button>
-                    <button class='btn-action btn-download' data-id='{$row['id']}'><i class='fas fa-download'></i> Unduh</button>
-                    <button class='btn-action btn-delete' data-id='{$row['id']}'><i class='fas fa-trash'></i> Hapus</button>
+                  <div class="action-buttons">
+                    <button class="btn-action btn-view" data-id="<?= $row['id'] ?>">Lihat</button>
+                    <button class="btn-action btn-edit" data-id="<?= $row['id'] ?>">Edit</button>
+                    <button class="btn-action btn-download" data-id="<?= $row['id'] ?>">Unduh</button>
+                    <button class="btn-action btn-delete" data-id="<?= $row['id'] ?>">Hapus</button>
                   </div>
                 </td>
-              </tr>";
-            }
-            ?>
+              </tr>
+            <?php } ?>
           </tbody>
+
         </table>
       </div>
     </div>
@@ -788,7 +800,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" id="btnTutupView">Tutup</button>
           <div class="action-tools">
-           
+
           </div>
         </div>
       </div>
@@ -823,68 +835,69 @@
 
       // Fungsi untuk membuka modal edit
       function bukaModalEdit(id) {
+        const row = document.querySelector(`tr[data-id="${id}"]`);
+        if (!row) return;
+
         editMode = true;
         modalTitle.textContent = "Edit Notulen";
         btnSubmit.textContent = "Update Notulen";
 
-        // Ambil data dari baris tabel
-        const row = document.querySelector(`tr[data-id="${id}"]`);
-        if (row) {
-          const cells = row.querySelectorAll('td');
-          notulenIdInput.value = id;
-          document.getElementById('judulNotulen').value = cells[0].textContent;
-          document.getElementById('pembuatNotulen').value = cells[3].textContent;
+        notulenIdInput.value = id;
+        document.getElementById('judulNotulen').value = row.children[0].textContent;
+        document.getElementById('agendaRapat').value = row.dataset.agenda;
+        document.getElementById('pembuatNotulen').value = row.children[3].textContent;
+        document.getElementById('pembahasan').value = row.dataset.notes;
+        document.getElementById('keputusan').value = row.dataset.decisions;
+        document.getElementById('tindakLanjut').value = row.dataset.followup;
 
-          // Untuk field lainnya, Anda perlu mengambil dari database via AJAX
-          // atau menyimpan data dalam atribut data-* pada baris tabel
-
-          modalNotulen.style.display = 'flex';
-          document.body.style.overflow = 'hidden';
-        }
+        modalNotulen.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
       }
+
+      
 
       // Fungsi untuk membuka modal view
       function bukaModalView(id) {
-        // Dalam implementasi nyata, Anda akan mengambil data dari database via AJAX
-        // Di sini saya menggunakan data dari baris tabel sebagai contoh
         const row = document.querySelector(`tr[data-id="${id}"]`);
-        if (row) {
-          const cells = row.querySelectorAll('td');
+        if (!row) return;
 
-          notulenViewContent.innerHTML = `
-            <div class="info-group">
-              <div class="info-label">Judul Notulen</div>
-              <div class="info-value">${cells[0].textContent}</div>
-            </div>
-            
-            <div class="form-row">
-              <div class="info-group" style="flex: 1;">
-                <div class="info-label">Agenda</div>
-                <div class="info-value">${cells[1].textContent}</div>
-              </div>
-              <div class="info-group" style="flex: 1;">
-                <div class="info-label">Tanggal Rapat</div>
-                <div class="info-value">${cells[2].textContent}</div>
-              </div>
-            </div>
+        notulenViewContent.innerHTML = `
+    <div class="info-group">
+      <div class="info-label">Judul</div>
+      <div class="info-value">${row.children[0].textContent}</div>
+    </div>
 
-            <div class="form-row">
-              <div class="info-group" style="flex: 1;">
-                <div class="info-label">Pembuat Notulen</div>
-                <div class="info-value">${cells[3].textContent}</div>
-              </div>
-              <div class="info-group" style="flex: 1;">
-                <div class="info-label">Status</div>
-                <div class="info-value">${cells[4].textContent}</div>
-              </div>
-            </div>
+    <div class="info-group">
+      <div class="info-label">Agenda</div>
+      <div class="info-value">${row.dataset.agenda}</div>
+    </div>
 
-          `;
+    <div class="info-group">
+      <div class="info-label">Pembahasan</div>
+      <div class="info-value">${row.dataset.notes}</div>
+    </div>
 
-          modalViewNotulen.style.display = 'flex';
-          document.body.style.overflow = 'hidden';
-        }
+    <div class="info-group">
+      <div class="info-label">Keputusan</div>
+      <div class="info-value">${row.dataset.decisions}</div>
+    </div>
+
+    <div class="info-group">
+      <div class="info-label">Tindak Lanjut</div>
+      <div class="info-value">${row.dataset.followup}</div>
+    </div>
+
+    <div class="info-group">
+      <div class="info-label">Status</div>
+      <div class="info-value">${row.children[4].textContent}</div>
+    </div>
+  `;
+
+        modalViewNotulen.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
       }
+
+
 
       // Fungsi untuk menutup modal
       function tutupModal() {
@@ -1003,6 +1016,51 @@
         overlay.addEventListener('click', closeSidebar);
       });
     </script>
+
+    <script>
+      const filterStatus = document.getElementById('filterStatus');
+      const filterRapat = document.getElementById('filterRapat');
+      const filterTanggal = document.getElementById('filterTanggal');
+
+      function applyFilter() {
+        const s = filterStatus.value;
+        const r = filterRapat.value;
+        const t = filterTanggal.value;
+
+        document.querySelectorAll('#tableBody tr').forEach(row => {
+          const rs = row.dataset.status;
+          const rr = row.dataset.rapat;
+          const rt = row.dataset.tanggal;
+
+          const statusOK = s === 'all' || rs === s;
+          const rapatOK = r === 'all' || rr.includes(r);
+          const tanggalOK = !t || rt === t;
+
+          row.style.display = (statusOK && rapatOK && tanggalOK) ? '' : 'none';
+        });
+      }
+
+      function cekNotulen() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        const filters = [filterStatus, filterRapat, filterTanggal];
+        const info = document.getElementById('filterInfo');
+
+        if (rows.length === 0) {
+          filters.forEach(f => f.disabled = true);
+          info.style.display = 'block';
+        } else {
+          filters.forEach(f => f.disabled = false);
+          info.style.display = 'none';
+        }
+      }
+
+      filterStatus.addEventListener('change', applyFilter);
+      filterRapat.addEventListener('change', applyFilter);
+      filterTanggal.addEventListener('change', applyFilter);
+      document.addEventListener('DOMContentLoaded', cekNotulen);
+    </script>
+
+
   </body>
 
   </html>
