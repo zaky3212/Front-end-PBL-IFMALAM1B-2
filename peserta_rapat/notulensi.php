@@ -157,8 +157,9 @@ body {
 
 /* Logout Box tetap di bawah */
 .logout-box {
-    margin-top: 20px;
+    margin-top: auto; 
 }
+
 
 .logout-btn {
     display: flex;
