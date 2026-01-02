@@ -664,13 +664,7 @@
             <option value="selesai">Selesai</option>
           </select>
 
-          <select id="filterRapat" class="filter-select">
-            <option value="all">Semua Judul</option>
-            <option value="rapat koordinasi">Rapat Koordinasi</option>
-            <option value="rapat evaluasi">Rapat Evaluasi</option>
-            <option value="rapat perencanaan">Rapat Perencanaan</option>
-          </select>
-
+        
           <input type="date" id="filterTanggal" class="filter-select">
         </div>
 
