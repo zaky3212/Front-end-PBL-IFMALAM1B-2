@@ -13,9 +13,30 @@
             $search = isset($_GET['search']) ? mysqli_real_escape_string($koneksi, $_GET['search']) : '';
 
             // Query data rapat dengan filter ruang
-            $sql = "SELECT * FROM meetings 
-                    WHERE locations LIKE '%$search%' 
-                    ORDER BY dates DESC";
+            $sql = "
+            SELECT *,
+            CASE
+              WHEN NOW() > CONCAT(dates, ' ', end_time) THEN 'Selesai'
+              WHEN NOW() BETWEEN CONCAT(dates, ' ', start_time) AND CONCAT(dates, ' ', end_time) THEN 'Berlangsung'
+              ELSE 'Mendatang'
+            END AS status_rapat
+            FROM meetings
+            WHERE
+              title LIKE '%$search%' OR
+              leader LIKE '%$search%' OR
+              locations LIKE '%$search%' OR
+              start_time LIKE '%$search%' OR
+              end_time LIKE '%$search%' OR
+              dates LIKE '%$search%' OR
+              (
+                CASE
+                  WHEN NOW() > CONCAT(dates, ' ', end_time) THEN 'Selesai'
+                  WHEN NOW() BETWEEN CONCAT(dates, ' ', start_time) AND CONCAT(dates, ' ', end_time) THEN 'Berlangsung'
+                  ELSE 'Mendatang'
+                END
+              ) LIKE '%$search%'
+            ORDER BY dates DESC
+            ";
 
             $result = mysqli_query($koneksi, $sql);
             if (!$result) {
@@ -195,20 +216,28 @@
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        gap: 8px;
-                        padding: 10px 15px;
+                        gap: 10px;
+                        padding: 12px 16px;
                         width: 100%;
                         background-color: #ff4d4f;
-                        /* merah untuk menandakan logout */
+                        /* WARNA TETAP */
                         color: #fff;
                         font-weight: 600;
-                        border-radius: 10px;
+                        border-radius: 12px;
                         text-decoration: none;
-                        transition: background-color 0.3s ease;
+                        letter-spacing: 0.3px;
+                        transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    }
+
+                    .logout-btn i {
+                        font-size: 18px;
                     }
 
                     .logout-btn:hover {
-                        background-color: #ff7875;
+                        background-color: #ff4d4f;
+                        /* WARNA TETAP */
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
                     }
 
                     /* ===============================
@@ -307,7 +336,7 @@
                     <!-- Logout Box -->
                     <div class="logout-box">
                         <a href="../logout.php" class="logout-btn">
-                            <i class="bi bi-box-arrow-right"></i> Logout
+                            Keluar
                         </a>
                     </div>
                 </div>
@@ -329,7 +358,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Judul Rapat</th>
-                                    <th>Leader</th>
+                                    <th>Pemimpin</th>
                                     <th>Ruang</th>
                                     <th>Mulai</th>
                                     <th>Selesai</th>
@@ -341,7 +370,7 @@
                             <tbody>
                                 <?php if (mysqli_num_rows($result) > 0): ?>
                                     <?php while ($row = mysqli_fetch_assoc($result)):
-                                        $status = getStatus($row['dates'], $row['start_time'], $row['end_time']);
+                                        $status = $row['status_rapat'];
                                         $badgeClass = strtolower($status); ?>
                                         <tr>
                                             <td><?= htmlspecialchars($row['title']); ?></td>
@@ -355,7 +384,7 @@
                                             </td>
                                             <td>
                                                 <a href="detail.php?id=<?= $row['id']; ?>" class="btn btn-sm btn-primary">
-                                                    <i class="bi bi-eye"></i> Detail
+                                                    <i class="bi bi-eye"></i> Lihat
                                                 </a>
                                             </td>
                                         </tr>

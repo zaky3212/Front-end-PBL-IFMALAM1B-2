@@ -259,7 +259,7 @@ if (isset($_GET['error'])) {
     </div>
     <div class="logout-box">
       <a href="../logout.php" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
+        <i class="fas fa-sign-out-alt"></i> Keluar
       </a>
     </div>
   </div>
@@ -309,7 +309,7 @@ if (isset($_GET['error'])) {
         </div>
         <div class="action-tools">
           <a href="export_peserta_pdf.php" class="btn-tool">
-            <i class="fas fa-file-pdf"></i> Export PDF
+            <i class="fas fa-file-pdf"></i> Download PDF
           </a>
 
         </div>

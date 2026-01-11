@@ -170,23 +170,32 @@ body {
 }
 
 .logout-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 15px;
-    width: 100%;
-    background-color: #ff4d4f; /* merah untuk menandakan logout */
-    color: #fff;
-    font-weight: 600;
-    border-radius: 10px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 16px;
+      width: 100%;
+      background-color: #ff4d4f;
+      /* WARNA TETAP */
+      color: #fff;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-.logout-btn:hover {
-    background-color: #ff7875;
-}
+    .logout-btn i {
+      font-size: 18px;
+    }
+
+    .logout-btn:hover {
+      background-color: #ff4d4f;
+      /* WARNA TETAP */
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
 
 /* ===============================
    RESPONSIVE UNDANGAN PESERTA
@@ -282,9 +291,9 @@ body {
 
     <!-- Logout Box -->
     <div class="logout-box">
-        <a href="../logout.php" class="logout-btn">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </a>
+    <a href="../logout.php" class="logout-btn">
+        Keluar
+      </a>
     </div>
 </div>
 
@@ -324,7 +333,7 @@ body {
                     $status = match($d['attendance_status']) {
                         'accepted' => "<span class='badge bg-success'>Diterima</span>",
                         'declined' => "<span class='badge bg-danger'>Ditolak</span>",
-                        default => "<span class='badge bg-secondary'>Pending</span>",
+                        default => "<span class='badge bg-secondary'>Diproses</span>",
                     };
 
                     echo "

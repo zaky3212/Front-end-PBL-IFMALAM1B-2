@@ -251,7 +251,7 @@ footer {
 <nav class="navbar">
   <div class="nav-brand">
     <i class="fa-solid fa-handshake"></i>
-    <span>SPR</span>
+    <span>PENGELOLAAN RAPAT</span>
   </div>
   <div class="nav-menu">
     <a href="#">Beranda</a>

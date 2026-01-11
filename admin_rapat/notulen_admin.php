@@ -624,7 +624,7 @@
       </div>
       <div class="logout-box">
         <a href="../logout.php" class="logout-btn">
-          <i class="fas fa-sign-out-alt"></i> Logout
+          <i class="fas fa-sign-out-alt"></i> Keluar
         </a>
       </div>
     </div>

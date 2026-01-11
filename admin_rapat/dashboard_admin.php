@@ -239,7 +239,9 @@ $meetingsJson = json_encode($meetingsData);
       padding: 15px 0;
       border-radius: 8px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background-color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
       font-size: 14px;
       background-color: #fff;
       border: 1px solid #f0f0f0;
@@ -248,17 +250,16 @@ $meetingsJson = json_encode($meetingsData);
     }
 
     .calendar-date:not(.today):hover {
-      background-color: #e6dccb;
-      transform: scale(1.05);
+      background-color: #f2e9dc;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
     }
 
-
-
     .calendar-date.today {
-      background-color: #00f7ff;
-      color: #000;
+      background-color: #e6dccb;
+      color: #222;
       font-weight: 600;
-      border-color: #00f7ff;
+      border: 2px solid #d6cbb8;
     }
 
     .calendar-date.has-meeting {
@@ -433,6 +434,44 @@ $meetingsJson = json_encode($meetingsData);
       box-shadow: 0px 4px 12px rgba(255, 0, 0, 0.25);
     }
 
+    /* ===== SMOOTH TRANSITION (ADMIN DASHBOARD) ===== */
+
+
+    /* MENU */
+    .menu a:hover {
+      transform: translateX(4px);
+    }
+
+    /* CARD */
+    .calendar-date.today:hover,
+.calendar-date.has-meeting:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+    /* CALENDAR */
+    .calendar-date:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    /* TOOLTIP */
+    .meeting-tooltip {
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+
     /* HAMBURGER */
     .hamburger {
       display: none;
@@ -500,7 +539,7 @@ $meetingsJson = json_encode($meetingsData);
     </div>
     <div class="logout-box">
       <a href="../logout.php" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
+        <i class="fas fa-sign-out-alt"></i> Keluar
       </a>
     </div>
   </div>

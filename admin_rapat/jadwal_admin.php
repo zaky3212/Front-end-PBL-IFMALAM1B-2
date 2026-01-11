@@ -706,7 +706,7 @@
         </div>
         <div class="logout-box">
           <a href="../logout.php" class="logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Logout
+            <i class="fas fa-sign-out-alt"></i> Keluar
           </a>
         </div>
       </div>
@@ -721,7 +721,7 @@
           <h1>Jadwal Rapat</h1>
 
           <div class="search-box">
-            <input type="text" placeholder="Search..." id="searchInput">
+            <input type="text" placeholder="Search Jadwal..." id="searchInput">
             <i class="fas fa-search"></i>
           </div>
         </div>

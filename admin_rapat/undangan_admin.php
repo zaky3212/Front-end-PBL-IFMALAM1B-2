@@ -224,7 +224,7 @@ $admin_name = $_SESSION['username'];
     </div>
     <div class="logout-box">
       <a href="../logout.php" class="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
+        <i class="fas fa-sign-out-alt"></i> Keluar
       </a>
     </div>
   </div>
@@ -329,7 +329,7 @@ $admin_name = $_SESSION['username'];
             } elseif ($d['attendance_status'] == 'declined') {
               $s = "<span class='badge bg-danger'>Ditolak</span>";
             } else {
-              $s = "<span class='badge bg-secondary'>Pending</span>";
+              $s = "<span class='badge bg-secondary'>Diproses</span>";
             }
 
             echo "
