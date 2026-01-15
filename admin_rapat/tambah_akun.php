@@ -154,57 +154,55 @@ include '../koneksi.php';
 
         @media (max-width: 768px) {
 
-body {
-  overflow-x: hidden;
-  overflow-y: auto !important;
-}
+            body {
+                overflow-x: hidden;
+                overflow-y: auto !important;
+            }
 
-.main {
-  margin-left: 0 !important;
-  width: 100% !important;
-  padding: 20px 15px;
-}
+            .main {
+                margin-left: 0 !important;
+                width: 100% !important;
+                padding: 20px 15px;
+            }
 
-.content-center {
-  margin-top: 15px;
-}
+            .content-center {
+                margin-top: 15px;
+            }
 
-.form-box {
-  width: 100%;
-  padding: 20px;
-}
+            .form-box {
+                width: 100%;
+                padding: 20px;
+            }
 
-.form-actions {
-  flex-direction: column;
-}
+            .form-actions {
+                flex-direction: column;
+            }
 
-.btn-back,
-.btn-submit {
-  width: 100%;
-}
+            .btn-back,
+            .btn-submit {
+                width: 100%;
+            }
 
-.search-akun {
-  width: 100%;
-}
+            .search-akun {
+                width: 100%;
+            }
 
-.table-modern {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-}
+            .table-modern {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
 
-.table-modern th,
-.table-modern td {
-  font-size: 13px;
-  padding: 10px;
-}
+            .table-modern th,
+            .table-modern td {
+                font-size: 13px;
+                padding: 10px;
+            }
 
-h2 {
-  font-size: 20px;
-}
-}
-
-
+            h2 {
+                font-size: 20px;
+            }
+        }
     </style>
 </head>
 

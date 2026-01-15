@@ -32,13 +32,13 @@ $sql = "INSERT INTO participant(name,email,department,position,phone)
 
 if (mysqli_query($koneksi, $sql)) {
 
-    // ✅ ID participant BARU
+    //  ID participant BARU
     $participant_id = mysqli_insert_id($koneksi);
 
-    // ✅ CEK APAKAH USER SUDAH ADA
+    //  CEK APAKAH USER SUDAH ADA
     $cekUser = mysqli_query($koneksi, "SELECT id FROM users WHERE email='$email'");
 
-    // ✅ JIKA BELUM ADA → INSERT TANPA PASSWORD
+    //  JIKA BELUM ADA → INSERT TANPA PASSWORD
     if (mysqli_num_rows($cekUser) == 0) {
         mysqli_query($koneksi, "
             INSERT INTO users (username,email,role,participant_id,password)
