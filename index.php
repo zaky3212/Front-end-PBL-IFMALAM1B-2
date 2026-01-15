@@ -20,7 +20,7 @@ body {
   color: #3a2c1f;
 }
 
-/* ===== Navbar ===== */
+
 .navbar {
   position: sticky;
   top: 0;
@@ -186,7 +186,7 @@ body {
   margin-bottom: 10px;
 }
 
-/* ===== Footer ===== */
+
 footer {
   text-align: center;
   padding: 25px;
@@ -195,7 +195,6 @@ footer {
 }
 
 
-/* ===== Responsive ===== */
 @media (max-width: 768px) {
   .navbar {
     padding: 15px 25px;
@@ -211,7 +210,7 @@ footer {
   }
 }
 
-/* ===== Page Transition ===== */
+
 .page-transition {
   animation: fadeInPage 0.6s ease forwards;
 }
